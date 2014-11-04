@@ -1,5 +1,5 @@
 //
-//  ViewController.h
+//  DaiInboxView.h
 //  DaiInboxHUD
 //
 //  Created by 啟倫 陳 on 2014/10/31.
@@ -8,8 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-@interface ViewController : UIViewController
-
+@interface DaiInboxView : UIView
 
 @end
-

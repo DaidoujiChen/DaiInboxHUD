@@ -9,11 +9,15 @@
 /* Begin PBXBuildFile section */
 		0131ED391A037767001C0DD8 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 0131ED381A037767001C0DD8 /* main.m */; };
 		0131ED3C1A037767001C0DD8 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 0131ED3B1A037767001C0DD8 /* AppDelegate.m */; };
-		0131ED3F1A037767001C0DD8 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0131ED3E1A037767001C0DD8 /* ViewController.m */; };
-		0131ED421A037767001C0DD8 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0131ED401A037767001C0DD8 /* Main.storyboard */; };
 		0131ED441A037767001C0DD8 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0131ED431A037767001C0DD8 /* Images.xcassets */; };
-		0131ED471A037767001C0DD8 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0131ED451A037767001C0DD8 /* LaunchScreen.xib */; };
 		0131ED531A037767001C0DD8 /* DaiInboxHUDTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 0131ED521A037767001C0DD8 /* DaiInboxHUDTests.m */; };
+		0131ED5F1A037799001C0DD8 /* MainViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0131ED5D1A037799001C0DD8 /* MainViewController.m */; };
+		0131ED601A037799001C0DD8 /* MainViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0131ED5E1A037799001C0DD8 /* MainViewController.xib */; };
+		0131ED621A0377A4001C0DD8 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 0131ED611A0377A4001C0DD8 /* Default-568h@2x.png */; };
+		0131ED661A037896001C0DD8 /* DaiInboxHUD.m in Sources */ = {isa = PBXBuildFile; fileRef = 0131ED651A037896001C0DD8 /* DaiInboxHUD.m */; };
+		0131ED691A03794B001C0DD8 /* DaiInboxView.m in Sources */ = {isa = PBXBuildFile; fileRef = 0131ED681A03794B001C0DD8 /* DaiInboxView.m */; };
+		0187ACC31A087FF800094D67 /* DaiIndoxWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 0187ACC21A087FF800094D67 /* DaiIndoxWindow.m */; };
+		0187ACC61A08817F00094D67 /* DaiInboxViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0187ACC51A08817F00094D67 /* DaiInboxViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -32,14 +36,22 @@
 		0131ED381A037767001C0DD8 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		0131ED3A1A037767001C0DD8 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		0131ED3B1A037767001C0DD8 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
-		0131ED3D1A037767001C0DD8 /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
-		0131ED3E1A037767001C0DD8 /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
-		0131ED411A037767001C0DD8 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		0131ED431A037767001C0DD8 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
-		0131ED461A037767001C0DD8 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
 		0131ED4C1A037767001C0DD8 /* DaiInboxHUDTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DaiInboxHUDTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		0131ED511A037767001C0DD8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		0131ED521A037767001C0DD8 /* DaiInboxHUDTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DaiInboxHUDTests.m; sourceTree = "<group>"; };
+		0131ED5C1A037799001C0DD8 /* MainViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainViewController.h; sourceTree = "<group>"; };
+		0131ED5D1A037799001C0DD8 /* MainViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MainViewController.m; sourceTree = "<group>"; };
+		0131ED5E1A037799001C0DD8 /* MainViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MainViewController.xib; sourceTree = "<group>"; };
+		0131ED611A0377A4001C0DD8 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
+		0131ED641A037896001C0DD8 /* DaiInboxHUD.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DaiInboxHUD.h; sourceTree = "<group>"; };
+		0131ED651A037896001C0DD8 /* DaiInboxHUD.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DaiInboxHUD.m; sourceTree = "<group>"; };
+		0131ED671A03794B001C0DD8 /* DaiInboxView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DaiInboxView.h; sourceTree = "<group>"; };
+		0131ED681A03794B001C0DD8 /* DaiInboxView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DaiInboxView.m; sourceTree = "<group>"; };
+		0187ACC11A087FF800094D67 /* DaiIndoxWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DaiIndoxWindow.h; sourceTree = "<group>"; };
+		0187ACC21A087FF800094D67 /* DaiIndoxWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DaiIndoxWindow.m; sourceTree = "<group>"; };
+		0187ACC41A08817F00094D67 /* DaiInboxViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DaiInboxViewController.h; sourceTree = "<group>"; };
+		0187ACC51A08817F00094D67 /* DaiInboxViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DaiInboxViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -81,13 +93,13 @@
 		0131ED351A037767001C0DD8 /* DaiInboxHUD */ = {
 			isa = PBXGroup;
 			children = (
+				0131ED631A037885001C0DD8 /* DaiInboxHUD */,
 				0131ED3A1A037767001C0DD8 /* AppDelegate.h */,
 				0131ED3B1A037767001C0DD8 /* AppDelegate.m */,
-				0131ED3D1A037767001C0DD8 /* ViewController.h */,
-				0131ED3E1A037767001C0DD8 /* ViewController.m */,
-				0131ED401A037767001C0DD8 /* Main.storyboard */,
+				0131ED5C1A037799001C0DD8 /* MainViewController.h */,
+				0131ED5D1A037799001C0DD8 /* MainViewController.m */,
+				0131ED5E1A037799001C0DD8 /* MainViewController.xib */,
 				0131ED431A037767001C0DD8 /* Images.xcassets */,
-				0131ED451A037767001C0DD8 /* LaunchScreen.xib */,
 				0131ED361A037767001C0DD8 /* Supporting Files */,
 			);
 			path = DaiInboxHUD;
@@ -96,6 +108,7 @@
 		0131ED361A037767001C0DD8 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				0131ED611A0377A4001C0DD8 /* Default-568h@2x.png */,
 				0131ED371A037767001C0DD8 /* Info.plist */,
 				0131ED381A037767001C0DD8 /* main.m */,
 			);
@@ -117,6 +130,21 @@
 				0131ED511A037767001C0DD8 /* Info.plist */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		0131ED631A037885001C0DD8 /* DaiInboxHUD */ = {
+			isa = PBXGroup;
+			children = (
+				0131ED641A037896001C0DD8 /* DaiInboxHUD.h */,
+				0131ED651A037896001C0DD8 /* DaiInboxHUD.m */,
+				0187ACC11A087FF800094D67 /* DaiIndoxWindow.h */,
+				0187ACC21A087FF800094D67 /* DaiIndoxWindow.m */,
+				0187ACC41A08817F00094D67 /* DaiInboxViewController.h */,
+				0187ACC51A08817F00094D67 /* DaiInboxViewController.m */,
+				0131ED671A03794B001C0DD8 /* DaiInboxView.h */,
+				0131ED681A03794B001C0DD8 /* DaiInboxView.m */,
+			);
+			path = DaiInboxHUD;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -199,9 +227,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0131ED421A037767001C0DD8 /* Main.storyboard in Resources */,
-				0131ED471A037767001C0DD8 /* LaunchScreen.xib in Resources */,
 				0131ED441A037767001C0DD8 /* Images.xcassets in Resources */,
+				0131ED601A037799001C0DD8 /* MainViewController.xib in Resources */,
+				0131ED621A0377A4001C0DD8 /* Default-568h@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -219,9 +247,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0131ED3F1A037767001C0DD8 /* ViewController.m in Sources */,
 				0131ED3C1A037767001C0DD8 /* AppDelegate.m in Sources */,
+				0187ACC31A087FF800094D67 /* DaiIndoxWindow.m in Sources */,
+				0187ACC61A08817F00094D67 /* DaiInboxViewController.m in Sources */,
+				0131ED5F1A037799001C0DD8 /* MainViewController.m in Sources */,
+				0131ED691A03794B001C0DD8 /* DaiInboxView.m in Sources */,
 				0131ED391A037767001C0DD8 /* main.m in Sources */,
+				0131ED661A037896001C0DD8 /* DaiInboxHUD.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -242,25 +274,6 @@
 			targetProxy = 0131ED4D1A037767001C0DD8 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
-
-/* Begin PBXVariantGroup section */
-		0131ED401A037767001C0DD8 /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				0131ED411A037767001C0DD8 /* Base */,
-			);
-			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
-		0131ED451A037767001C0DD8 /* LaunchScreen.xib */ = {
-			isa = PBXVariantGroup;
-			children = (
-				0131ED461A037767001C0DD8 /* Base */,
-			);
-			name = LaunchScreen.xib;
-			sourceTree = "<group>";
-		};
-/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		0131ED541A037767001C0DD8 /* Debug */ = {
@@ -344,6 +357,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = DaiInboxHUD/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -354,6 +368,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = DaiInboxHUD/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -412,6 +427,7 @@
 				0131ED581A037767001C0DD8 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		0131ED591A037767001C0DD8 /* Build configuration list for PBXNativeTarget "DaiInboxHUDTests" */ = {
 			isa = XCConfigurationList;
@@ -420,6 +436,7 @@
 				0131ED5B1A037767001C0DD8 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
