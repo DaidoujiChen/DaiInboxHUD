@@ -89,9 +89,6 @@ typedef enum {
 
 @interface DaiInboxView ()
 
-//轉轉轉的 timer
-@property (nonatomic, strong) NSTimer *circleTimer;
-
 //當前長度, 旋轉角度, 狀態
 @property (nonatomic, assign) NSInteger length;
 @property (nonatomic, assign) NSInteger rotateAngle;
@@ -100,9 +97,16 @@ typedef enum {
 //變換的顏色, default 是 紅 -> 綠 -> 黃 -> 藍, 以及當前在哪一個顏色上
 @property (nonatomic, strong) NSArray *colors;
 @property (nonatomic, assign) NSInteger colorIndex;
+@property (nonatomic, strong) UIColor *finalColor;
+@property (nonatomic, strong) UIColor *prevColor;
+@property (nonatomic, strong) UIColor *gradualColor;
 
 //已等待張數
 @property (nonatomic, assign) NSInteger waitingFrameCount;
+
+//固定的中心點及半徑, 不需每次計算
+@property (nonatomic, assign) CGPoint circleCenter;
+@property (nonatomic, assign) CGFloat circleRadius;
 
 @end
 
@@ -112,59 +116,80 @@ typedef enum {
 
 //每 frame 所做的數值變動
 - (void)refreshCricle {
-    self.transform = CGAffineTransformMakeRotation(degreesToRadian(self.rotateAngle));
-    
-    switch (self.status) {
-        case CricleLengthStatusDecrease:
-        {
-            self.length -= lengthIteration;
-            self.rotateAngle += rotateIteration;
-            
-            if (self.length <= minLength) {
-                self.length = minLength;
-                self.status = CricleLengthStatusWaiting;
-                self.colorIndex++;
+    //為了不阻礙線程, 一部份的運算放到 background 做
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
+        switch (self.status) {
+            case CricleLengthStatusDecrease:
+            {
+                self.length -= lengthIteration;
+                self.rotateAngle += rotateIteration;
+                
+                //當長度扣到過短時, 讓他停下來, 設定好顏色, 準備另一個階段
+                if (self.length <= minLength) {
+                    self.length = minLength;
+                    self.status = CricleLengthStatusWaiting;
+                    self.colorIndex++;
+                    self.colorIndex %= [self.colors count];
+                    self.prevColor = self.finalColor;
+                    self.finalColor = self.colors[self.colorIndex];
+                }
+                break;
             }
-            break;
-        }
-            
-        case CricleLengthStatusIncrease:
-        {
-            self.length += lengthIteration;
-            CGFloat deltaLength = sin(((float)lengthIteration / 360) * M_PI_2) * 360;
-            self.rotateAngle += (rotateIteration + deltaLength);
-            
-            if (self.length >= maxLength) {
-                self.length = maxLength;
-                self.status = CricleLengthStatusWaiting;
+                
+            case CricleLengthStatusIncrease:
+            {
+                self.length += lengthIteration;
+                CGFloat deltaLength = sin(((float)lengthIteration / 360) * M_PI_2) * 360;
+                self.rotateAngle += (rotateIteration + deltaLength);
+                
+                //長度過長時, 讓他停下來, 準備去另一個階段
+                if (self.length >= maxLength) {
+                    self.length = maxLength;
+                    self.status = CricleLengthStatusWaiting;
+                }
+                break;
             }
-            break;
-        }
-            
-        case CricleLengthStatusWaiting:
-        {
-            self.waitingFrameCount++;
-            self.rotateAngle += rotateIteration;
-            
-            if (self.waitingFrameCount == maxWaitingFrame) {
-                self.waitingFrameCount = 0;
+                
+            case CricleLengthStatusWaiting:
+            {
+                self.waitingFrameCount++;
+                self.rotateAngle += rotateIteration;
+                
+                //這個狀態下需要多算一個漸變色
                 if (self.length == minLength) {
-                    self.status = CricleLengthStatusIncrease;
+                    CGFloat colorAPercent = ((float)self.waitingFrameCount / maxWaitingFrame);
+                    CGFloat colorBPercent = 1 - colorAPercent;
+                    UIColor *transparentColorA = [UIColor colorWithRed:self.finalColor.r green:self.finalColor.g blue:self.finalColor.b alpha:colorAPercent];
+                    UIColor *transparentColorB = [UIColor colorWithRed:self.prevColor.r green:self.prevColor.g blue:self.prevColor.b alpha:colorBPercent];
+                    self.gradualColor = [transparentColorA mixColor:transparentColorB];
                 }
-                else {
-                    self.status = CricleLengthStatusDecrease;
+                
+                //當幀數到達指定的數量, 按照他的狀態, 分配他該去的狀態
+                if (self.waitingFrameCount == maxWaitingFrame) {
+                    self.waitingFrameCount = 0;
+                    if (self.length == minLength) {
+                        self.status = CricleLengthStatusIncrease;
+                    }
+                    else {
+                        self.status = CricleLengthStatusDecrease;
+                    }
                 }
+                break;
             }
-            break;
         }
-    }
-    
-    self.rotateAngle %= 360;
-    [self setNeedsDisplay];
+        self.rotateAngle %= 360;
+        
+        //算完以後回 main thread 囉
+        dispatch_async(dispatch_get_main_queue(), ^{
+            self.transform = CGAffineTransformMakeRotation(degreesToRadian(self.rotateAngle));
+            [self setNeedsDisplay];
+        });
+    });
 }
 
 #pragma mark - method override
 
+//這邊主要就只負責把圖畫出來
 - (void)drawRect:(CGRect)rect {
     [super drawRect:rect];
     CGContextRef context = UIGraphicsGetCurrentContext();
@@ -173,47 +198,24 @@ typedef enum {
     CGContextSetLineCap(context, kCGLineCapRound);
     CGContextSetLineWidth(context, 2.0f);
     
-    //設定線條的顏色
-    UIColor *finalColor;
-    switch (self.status) {
-        case CricleLengthStatusDecrease:
-        case CricleLengthStatusIncrease:
-        {
-            finalColor = self.colors[self.colorIndex % [self.colors count]];
-            break;
-        }
-            
-        case CricleLengthStatusWaiting:
-        {
-            if (self.length == minLength) {
-                NSInteger prevIndex = (self.colorIndex - 1 + [self.colors count]) % [self.colors count];
-                NSInteger currentIndex = self.colorIndex % [self.colors count];
-                UIColor *opaqueColorA = self.colors[currentIndex];
-                UIColor *opaqueColorB = self.colors[prevIndex];
-                CGFloat colorAPercent = ((float)self.waitingFrameCount / maxWaitingFrame);
-                CGFloat colorBPercent = 1 - colorAPercent;
-                UIColor *transparentColorA = [UIColor colorWithRed:opaqueColorA.r green:opaqueColorA.g blue:opaqueColorA.b alpha:colorAPercent];
-                UIColor *transparentColorB = [UIColor colorWithRed:opaqueColorB.r green:opaqueColorB.g blue:opaqueColorB.b alpha:colorBPercent];
-                finalColor = [transparentColorA mixColor:transparentColorB];
-            }
-            else {
-                finalColor = self.colors[self.colorIndex % [self.colors count]];
-            }
-            break;
-        }
+    //設定線條的顏色, 只有在最短狀態的時候才需要用漸變色
+    if (self.status == CricleLengthStatusWaiting && self.length == minLength) {
+        CGContextSetRGBStrokeColor(context, self.gradualColor.r, self.gradualColor.g, self.gradualColor.b, self.gradualColor.a);
     }
-    CGContextSetRGBStrokeColor(context, finalColor.r, finalColor.g, finalColor.b, finalColor.a);
+    else {
+        CGContextSetRGBStrokeColor(context, self.finalColor.r, self.finalColor.g, self.finalColor.b, self.finalColor.a);
+    }
     
     //設定半弧的中心, 半徑, 起始以及終點
-    CGPoint center = CGPointMake(rect.size.width / 2, rect.size.height / 2);
-    CGFloat radius = rect.size.width / 3;
     CGFloat deltaLength = sin(((float)self.length / 360) * M_PI_2) * 360;
     CGFloat startAngle = degreesToRadian(-deltaLength);
-    CGFloat endAngle = degreesToRadian(0);
-    CGContextAddArc(context, center.x, center.y, radius, startAngle, endAngle, 0);
+    CGContextAddArc(context, self.circleCenter.x, self.circleCenter.y, self.circleRadius, startAngle, 0, 0);
     
     //著色
     CGContextStrokePath(context);
+    
+    //這邊改成用 afterDelay 的做法而不用 nstimer, 因為我怕有時候畫的時間因為各種原因過長, 如果只卡固定的 fps, 反而會降低 app 本身其他東西的效能
+    [self performSelector:@selector(refreshCricle) withObject:nil afterDelay:1.0f / framePerSecond];
 }
 
 #pragma mark - life cycle
@@ -223,24 +225,24 @@ typedef enum {
     if (self) {
         //初始值
         self.backgroundColor = [UIColor clearColor];
-        self.rotateAngle = 0;
+        self.rotateAngle = arc4random()%360;
         self.length = maxLength;
         self.status = CricleLengthStatusDecrease;
-        self.colorIndex = 0;
         self.waitingFrameCount = 0;
         self.colors = @[[UIColor redColor], [UIColor greenColor], [UIColor yellowColor], [UIColor blueColor]];
+        self.colorIndex = arc4random()%[self.colors count];
+        self.finalColor = self.colors[self.colorIndex];
+        
+        self.circleCenter = CGPointMake(frame.size.width / 2, frame.size.height / 2);
+        self.circleRadius = frame.size.width / 3;
     }
     return self;
 }
 
 - (void)willMoveToSuperview:(UIView *)newSuperview {
     //從 newSuperview 的有無可以判斷現在是被加入或是被移除
-    if (newSuperview) {
-        self.circleTimer = [NSTimer scheduledTimerWithTimeInterval:1.0f / framePerSecond target:self selector:@selector(refreshCricle) userInfo:nil repeats:YES];
-        [[NSRunLoop currentRunLoop] addTimer:self.circleTimer forMode:NSDefaultRunLoopMode];
-    }
-    else {
-        [self.circleTimer invalidate];
+    if (!newSuperview) {
+        [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(refreshCricle) object:nil];
     }
 }
 
