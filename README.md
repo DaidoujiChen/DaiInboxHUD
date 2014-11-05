@@ -3,7 +3,7 @@ DaiInboxHUD
 
 這是一個模仿 google inbox 轉圈效果的 HUD.
 
-![image](https://s3-ap-northeast-1.amazonaws.com/daidoujiminecraft/Daidouji/DaiInboxHUD_20141104.gif)
+![image](https://s3-ap-northeast-1.amazonaws.com/daidoujiminecraft/Daidouji/DaiInboxHUD_20141105.gif)
 
 DaidoujiChen
 
@@ -22,6 +22,12 @@ daidoujichen@gmail.com
 然後就算是可以使用了, 當要叫 HUD 出來的時候 call
 
 	[DaiInboxHUD show];
+	
+如果想要秀帶訊息的 hud 可以調用
+
+	[DaiInboxHUD showMessage:[[NSAttributedString alloc] initWithString:@"Loading"]];
+	
+在這邊 message 的型別是 `NSAttributedString`, 這意味著你可以調整你想要的字型或是大小, 或是任何符合規定的效果, 比起 `NSString` 的話, 我認為靈活度會比較大,
 	
 要他消失的時候 call
 
