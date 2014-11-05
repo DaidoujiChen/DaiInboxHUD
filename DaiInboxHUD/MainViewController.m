@@ -19,14 +19,14 @@
 #pragma mark - ibaction
 
 - (IBAction)showAction:(id)sender {
-    [DaiInboxHUD showHUD];
+    [DaiInboxHUD show];
     [self performSelector:@selector(hideHUD) withObject:nil afterDelay:10.0f];
 }
 
 #pragma mark - private
 
 - (void)hideHUD {
-    [DaiInboxHUD hideHUD];
+    [DaiInboxHUD hide];
 }
 
 #pragma mark - life cycle

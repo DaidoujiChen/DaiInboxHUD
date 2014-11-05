@@ -13,7 +13,7 @@
 
 @interface DaiInboxHUD : NSObject
 
-+ (void)showHUD;
-+ (void)hideHUD;
++ (void)show;
++ (void)hide;
 
 @end

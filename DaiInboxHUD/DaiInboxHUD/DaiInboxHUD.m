@@ -14,12 +14,12 @@
 
 #pragma mark - class method
 
-+ (void)showHUD {
++ (void)show {
     [self hudWindow].rootViewController = [DaiInboxViewController new];
     [[self hudWindow] makeKeyAndVisible];
 }
 
-+ (void)hideHUD {
++ (void)hide {
     [[self hudWindow].rootViewController performSelector:@selector(hide:) withObject: ^{
         [self hudWindow].hidden = YES;
         [self setHudWindow:nil];
