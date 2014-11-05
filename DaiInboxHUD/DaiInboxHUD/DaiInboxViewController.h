@@ -14,6 +14,7 @@
 
 @property (nonatomic, strong) NSArray *hudColors;
 @property (nonatomic, strong) UIColor *hudBackgroundColor;
+@property (nonatomic, strong) UIColor *hudMaskColor;
 @property (nonatomic, assign) CGFloat hudLineWidth;
 @property (nonatomic, strong) NSAttributedString *hudMessage;
 

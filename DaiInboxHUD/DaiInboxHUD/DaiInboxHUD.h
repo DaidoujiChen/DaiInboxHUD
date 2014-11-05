@@ -26,6 +26,9 @@
 //設定 hud 的背景顏色, 預設為 0.65 alpha 的黑色
 + (void)setBackgroundColor:(UIColor *)backgroundColor;
 
+//設定 hud 跳出來時, 原來的畫面要用什麼顏色蓋住, 預設蓋住的顏色是 clearColor
++ (void)setMaskColor:(UIColor *)maskColor;
+
 //設定 hud 轉圈圈線的粗細, 預設為 2.0f, 數值大約到 10.0f 都還可以看, 到 20.0f 就不知道在幹嘛了
 + (void)setLineWidth:(CGFloat)lineWidth;
 

@@ -33,12 +33,20 @@
 #pragma mark - instance method
 
 // hide hud 然後帶個動畫
-- (void)hide:(void (^)(void))completion {
+- (void)hide:(void (^)(void))completion {    
     __weak DaiInboxViewController *wealSelf = self;
-    [UIView animateWithDuration:1.0f animations: ^{
-        wealSelf.centerView.alpha = 0;
+    [UIView animateWithDuration:0.3 / 1.5 animations: ^{
+        wealSelf.centerView.transform = CGAffineTransformScale(CGAffineTransformIdentity, 0.9, 0.9);
     } completion: ^(BOOL finished) {
-        completion();
+        [UIView animateWithDuration:0.3 / 2 animations: ^{
+            wealSelf.centerView.transform = CGAffineTransformScale(CGAffineTransformIdentity, 1.1, 1.1);
+        } completion: ^(BOOL finished) {
+            [UIView animateWithDuration:0.3 / 2 animations: ^{
+                wealSelf.centerView.transform = CGAffineTransformScale(CGAffineTransformIdentity, 0.001, 0.001);;
+            } completion:^(BOOL finished) {
+                completion();
+            }];
+        }];
     }];
 }
 
@@ -91,6 +99,8 @@
 #pragma mark - life cycle
 
 - (void)viewDidLoad {
+    [super viewDidLoad];
+    self.view.backgroundColor = self.hudMaskColor;
     [self setupDefaultHUD];
     
     //一開始的彈出動畫效果

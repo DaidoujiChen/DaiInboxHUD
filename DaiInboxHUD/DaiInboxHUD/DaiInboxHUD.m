@@ -24,6 +24,7 @@
     DaiInboxViewController *inboxViewController = [DaiInboxViewController new];
     inboxViewController.hudColors = [self hudColors];
     inboxViewController.hudBackgroundColor = [self hudBackgroundColor];
+    inboxViewController.hudMaskColor = [self hudMaskColor];
     inboxViewController.hudLineWidth = [self hudLineWidth];
     inboxViewController.hudMessage = message;
     [self hudWindow].rootViewController = inboxViewController;
@@ -50,16 +51,20 @@
     }
     
     //合法就讓他設定, 不合法則跳錯誤訊息
-    if ([colors count] > 1 && isLegal) {
+    if ([colors count] && isLegal) {
         [self setHudColors:colors];
     }
     else {
-        NSLog(@"填入的顏色不被採用, 建議要填入兩個以上的顏色, 或是元素不合法.");
+        NSLog(@"填入的顏色不被採用, 建議要填入一個以上的顏色, 或是元素不合法.");
     }
 }
 
 + (void)setBackgroundColor:(UIColor *)backgroundColor {
     [self setHudBackgroundColor:backgroundColor];
+}
+
++ (void)setMaskColor:(UIColor *)maskColor {
+    [self setHudMaskColor:maskColor];
 }
 
 + (void)setLineWidth:(CGFloat)lineWidth {
@@ -115,6 +120,17 @@
     }
     NSNumber *hudLineWidth = objc_getAssociatedObject(self, _cmd);
     return [hudLineWidth floatValue];
+}
+
++ (void)setHudMaskColor:(UIColor *)hudMaskColor {
+    objc_setAssociatedObject(self, @selector(hudMaskColor), hudMaskColor, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+}
+
++ (UIColor *)hudMaskColor {
+    if (!objc_getAssociatedObject(self, _cmd)) {
+        [self setHudMaskColor:[UIColor clearColor]];
+    }
+    return objc_getAssociatedObject(self, _cmd);
 }
 
 @end

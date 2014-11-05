@@ -44,6 +44,9 @@
     //想要的背景色
     [DaiInboxHUD setBackgroundColor:[UIColor orangeColor]];
     
+    //想要的遮膜色
+    [DaiInboxHUD setMaskColor:[UIColor colorWithRed:0 green:0 blue:0 alpha:0.5f]];
+    
     //想要的線條粗度
     [DaiInboxHUD setLineWidth:4.0f];
     
