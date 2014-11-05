@@ -14,6 +14,9 @@
 //顯示 hud
 + (void)show;
 
+//顯示帶字的 hud
++ (void)showMessage:(NSAttributedString *)message;
+
 //隱藏 hud
 + (void)hide;
 

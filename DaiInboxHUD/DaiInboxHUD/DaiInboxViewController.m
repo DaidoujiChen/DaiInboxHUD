@@ -8,8 +8,8 @@
 
 #import "DaiInboxViewController.h"
 
-#define centerViewSize 50.0f
 #define inboxViewSize 30.0f
+#define borderGap 10.0f
 
 @implementation UIView (Center)
 
@@ -45,19 +45,44 @@
 #pragma mark - private
 
 - (void)setupDefaultHUD {
+    CGRect messageFrame = CGRectZero;
+    UILabel *hudMessageLabel;
+    
+    //如果 hud message 有東西, 先算他的 size
+    if (self.hudMessage) {
+        hudMessageLabel = [UILabel new];
+        hudMessageLabel.attributedText = self.hudMessage;
+        [hudMessageLabel sizeToFit];
+        messageFrame = hudMessageLabel.frame;
+    }
+    
     //設定好 centerview 的大小
-    self.centerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, centerViewSize, centerViewSize)];
+    //寬度的算法, 取 hud 本身或是 label 的最大者, 加上左右兩旁的邊框
+    CGFloat centerViewWidth = MAX(inboxViewSize, messageFrame.size.width) + borderGap*2;
+    
+    //高度的算法, 只有 hud 的時候就是 hud 本身加上上下的邊框, 多 label 的話, 要在 hud 跟 label 之間多塞一個一半大小的 gap
+    CGFloat centerViewHeight = inboxViewSize + messageFrame.size.height + borderGap*2 + ((self.hudMessage)?borderGap*0.5:0);
+    self.centerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, centerViewWidth, centerViewHeight)];
     [self.centerView centerInBounds:[UIScreen mainScreen].bounds];
     self.centerView.backgroundColor = self.hudBackgroundColor;
-    self.centerView.layer.cornerRadius = centerViewSize * 0.1f;
+    self.centerView.layer.cornerRadius = 5.0f;
     self.centerView.layer.masksToBounds = YES;
     
+    //開始把東西加入 centerView
+    CGFloat objectHeight = borderGap;
+    
     //加入 hud 主體
-    DaiInboxView *inboxView = [[DaiInboxView alloc] initWithFrame:CGRectMake(0, 0, inboxViewSize, inboxViewSize)];
+    DaiInboxView *inboxView = [[DaiInboxView alloc] initWithFrame:CGRectMake(self.centerView.frame.size.width / 2 - inboxViewSize / 2, objectHeight, inboxViewSize, inboxViewSize)];
     inboxView.hudColors = self.hudColors;
     inboxView.hudLineWidth = self.hudLineWidth;
-    [inboxView centerInBounds:self.centerView.bounds];
     [self.centerView addSubview:inboxView];
+    objectHeight += inboxView.frame.size.height + ((self.hudMessage)?borderGap*0.5:0);
+    
+    //如果有 label 的話就加
+    if (self.hudMessage) {
+        hudMessageLabel.frame = CGRectMake(self.centerView.frame.size.width / 2 - hudMessageLabel.frame.size.width / 2, objectHeight, hudMessageLabel.frame.size.width, hudMessageLabel.frame.size.height);
+        [self.centerView addSubview:hudMessageLabel];
+    }
     
     //放到 view 裡
     [self.view addSubview:self.centerView];

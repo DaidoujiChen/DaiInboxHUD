@@ -17,10 +17,15 @@
 #pragma mark - class method
 
 + (void)show {
+    [self showMessage:nil];
+}
+
++ (void)showMessage:(NSAttributedString *)message {
     DaiInboxViewController *inboxViewController = [DaiInboxViewController new];
     inboxViewController.hudColors = [self hudColors];
     inboxViewController.hudBackgroundColor = [self hudBackgroundColor];
     inboxViewController.hudLineWidth = [self hudLineWidth];
+    inboxViewController.hudMessage = message;
     [self hudWindow].rootViewController = inboxViewController;
     [[self hudWindow] makeKeyAndVisible];
 }

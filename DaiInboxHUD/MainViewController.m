@@ -19,7 +19,11 @@
 #pragma mark - ibaction
 
 - (IBAction)showAction:(id)sender {
-    [DaiInboxHUD show];
+    UIFont *font = [UIFont preferredFontForTextStyle:UIFontTextStyleHeadline];
+    UIColor *textColor = [UIColor blackColor];
+    NSDictionary *attributes = @{ NSForegroundColorAttributeName : textColor, NSFontAttributeName : font, NSTextEffectAttributeName : NSTextEffectLetterpressStyle };
+    NSAttributedString *attributedString = [[NSAttributedString alloc] initWithString:@"Loading" attributes:attributes];
+    [DaiInboxHUD showMessage:attributedString];
     [self performSelector:@selector(hideHUD) withObject:nil afterDelay:10.0f];
 }
 
