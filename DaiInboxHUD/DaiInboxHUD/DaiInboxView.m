@@ -95,7 +95,6 @@ typedef enum {
 @property (nonatomic, assign) CricleLengthStatus status;
 
 //變換的顏色, default 是 紅 -> 綠 -> 黃 -> 藍, 以及當前在哪一個顏色上
-@property (nonatomic, strong) NSArray *colors;
 @property (nonatomic, assign) NSInteger colorIndex;
 @property (nonatomic, strong) UIColor *finalColor;
 @property (nonatomic, strong) UIColor *prevColor;
@@ -129,9 +128,9 @@ typedef enum {
                     self.length = minLength;
                     self.status = CricleLengthStatusWaiting;
                     self.colorIndex++;
-                    self.colorIndex %= [self.colors count];
+                    self.colorIndex %= [self.hudColors count];
                     self.prevColor = self.finalColor;
-                    self.finalColor = self.colors[self.colorIndex];
+                    self.finalColor = self.hudColors[self.colorIndex];
                 }
                 break;
             }
@@ -196,7 +195,7 @@ typedef enum {
     
     //設定線條的粗細, 以及圓角
     CGContextSetLineCap(context, kCGLineCapRound);
-    CGContextSetLineWidth(context, 2.0f);
+    CGContextSetLineWidth(context, self.hudLineWidth);
     
     //設定線條的顏色, 只有在最短狀態的時候才需要用漸變色
     if (self.status == CricleLengthStatusWaiting && self.length == minLength) {
@@ -229,10 +228,6 @@ typedef enum {
         self.length = maxLength;
         self.status = CricleLengthStatusDecrease;
         self.waitingFrameCount = 0;
-        self.colors = @[[UIColor redColor], [UIColor greenColor], [UIColor yellowColor], [UIColor blueColor]];
-        self.colorIndex = arc4random()%[self.colors count];
-        self.finalColor = self.colors[self.colorIndex];
-        
         self.circleCenter = CGPointMake(frame.size.width / 2, frame.size.height / 2);
         self.circleRadius = frame.size.width / 3;
     }
@@ -241,7 +236,11 @@ typedef enum {
 
 - (void)willMoveToSuperview:(UIView *)newSuperview {
     //從 newSuperview 的有無可以判斷現在是被加入或是被移除
-    if (!newSuperview) {
+    if (newSuperview) {
+        self.colorIndex = arc4random()%[self.hudColors count];
+        self.finalColor = self.hudColors[self.colorIndex];
+    }
+    else {
         [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(refreshCricle) object:nil];
     }
 }

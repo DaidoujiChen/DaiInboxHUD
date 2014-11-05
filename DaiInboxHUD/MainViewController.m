@@ -33,6 +33,17 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
+    //客製化想要的顏色
+    [DaiInboxHUD setColors:@[[UIColor grayColor], [UIColor whiteColor], [UIColor blackColor], [UIColor purpleColor]]];
+    
+    //想要的背景色
+    [DaiInboxHUD setBackgroundColor:[UIColor orangeColor]];
+    
+    //想要的線條粗度
+    [DaiInboxHUD setLineWidth:4.0f];
+    
+    //當然也都可以不設, 使用預設帶的值
 }
 
 @end

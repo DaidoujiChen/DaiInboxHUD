@@ -12,6 +12,10 @@
 
 @interface DaiInboxViewController : UIViewController
 
+@property (nonatomic, strong) NSArray *hudColors;
+@property (nonatomic, strong) UIColor *hudBackgroundColor;
+@property (nonatomic, assign) CGFloat hudLineWidth;
+
 - (void)hide:(void (^)(void))completion;
 
 @end

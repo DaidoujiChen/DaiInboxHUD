@@ -48,18 +48,14 @@
     //設定好 centerview 的大小
     self.centerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, centerViewSize, centerViewSize)];
     [self.centerView centerInBounds:[UIScreen mainScreen].bounds];
-    self.centerView.backgroundColor = [UIColor clearColor];
+    self.centerView.backgroundColor = self.hudBackgroundColor;
     self.centerView.layer.cornerRadius = centerViewSize * 0.1f;
     self.centerView.layer.masksToBounds = YES;
     
-    //放一塊黑色的膜在 hud 下
-    UIView *blackView = [[UIView alloc] initWithFrame:self.centerView.bounds];
-    blackView.backgroundColor = [UIColor blackColor];
-    blackView.alpha = 0.65f;
-    [self.centerView addSubview:blackView];
-    
     //加入 hud 主體
     DaiInboxView *inboxView = [[DaiInboxView alloc] initWithFrame:CGRectMake(0, 0, inboxViewSize, inboxViewSize)];
+    inboxView.hudColors = self.hudColors;
+    inboxView.hudLineWidth = self.hudLineWidth;
     [inboxView centerInBounds:self.centerView.bounds];
     [self.centerView addSubview:inboxView];
     

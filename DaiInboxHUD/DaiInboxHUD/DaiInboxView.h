@@ -10,4 +10,7 @@
 
 @interface DaiInboxView : UIView
 
+@property (nonatomic, strong) NSArray *hudColors;
+@property (nonatomic, assign) CGFloat hudLineWidth;
+
 @end
