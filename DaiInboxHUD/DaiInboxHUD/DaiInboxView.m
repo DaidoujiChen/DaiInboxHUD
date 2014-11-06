@@ -75,8 +75,20 @@ typedef enum {
     NSDictionary *rgba = objc_getAssociatedObject(self, _cmd);
     if (!rgba) {
         CGFloat red = 0.0f, green = 0.0f, blue = 0.0f, alpha = 0.0f;
-        [self getRed:&red green:&green blue:&blue alpha:&alpha];
-        [self setRgba:@{ @"r":@(red), @"g":@(green), @"b":@(blue), @"a":@(alpha) }];
+        if ([self getRed:&red green:&green blue:&blue alpha:&alpha]) {
+            [self setRgba:@{ @"r":@(red), @"g":@(green), @"b":@(blue), @"a":@(alpha) }];
+        }
+        else {
+            //http://stackoverflow.com/questions/4700168/get-rgb-value-from-uicolor-presets
+            CGColorSpaceRef rgbColorSpace = CGColorSpaceCreateDeviceRGB();
+            unsigned char resultingPixel[3];
+            CGContextRef context = CGBitmapContextCreate(&resultingPixel, 1, 1, 8, 4, rgbColorSpace, (CGBitmapInfo)kCGImageAlphaNone);
+            CGContextSetFillColorWithColor(context, [self CGColor]);
+            CGContextFillRect(context, CGRectMake(0, 0, 1, 1));
+            CGContextRelease(context);
+            CGColorSpaceRelease(rgbColorSpace);
+            [self setRgba:@{ @"r":@(resultingPixel[0]), @"g":@(resultingPixel[1]), @"b":@(resultingPixel[2]), @"a":@(1.0f) }];
+        }
     }
     return objc_getAssociatedObject(self, _cmd);
 }
@@ -224,7 +236,7 @@ typedef enum {
     if (self) {
         //初始值
         self.backgroundColor = [UIColor clearColor];
-        self.rotateAngle = arc4random()%360;
+        self.rotateAngle = arc4random() % 360;
         self.length = maxLength;
         self.status = CricleLengthStatusDecrease;
         self.waitingFrameCount = 0;
@@ -237,7 +249,7 @@ typedef enum {
 - (void)willMoveToSuperview:(UIView *)newSuperview {
     //從 newSuperview 的有無可以判斷現在是被加入或是被移除
     if (newSuperview) {
-        self.colorIndex = arc4random()%[self.hudColors count];
+        self.colorIndex = arc4random() % [self.hudColors count];
         self.finalColor = self.hudColors[self.colorIndex];
     }
     else {
