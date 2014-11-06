@@ -13,11 +13,26 @@
 
 @implementation UIView (Center)
 
-- (void)centerInBounds:(CGRect)bounds {
+- (CGRect)centerInOrientation:(UIInterfaceOrientation)orientation {
+    CGRect screenBounds = [UIScreen mainScreen].bounds;
     CGRect newFrame = self.frame;
-    newFrame.origin.x = bounds.size.width / 2 - newFrame.size.width / 2;
-    newFrame.origin.y = bounds.size.height / 2 - newFrame.size.height / 2;
-    self.frame = newFrame;
+    if (UIDeviceOrientationIsPortrait(orientation)) {
+        newFrame.origin.x = screenBounds.size.width / 2 - newFrame.size.width / 2;
+        newFrame.origin.y = screenBounds.size.height / 2 - newFrame.size.height / 2;
+    }
+    else {
+        newFrame.origin.x = screenBounds.size.height / 2 - newFrame.size.height / 2;
+        newFrame.origin.y = screenBounds.size.width / 2 - newFrame.size.width / 2;
+        
+        //在 ios7 的時候, 不論手機轉橫轉直, screenSize always 是 320, 568
+        //而 ios8 的時候, 手機則會根據轉橫或是轉直而改變, ex: 直立時是 320, 568, 橫向為 568, 320
+        if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 8.0f) {
+            CGFloat swapValue = newFrame.origin.x;
+            newFrame.origin.x = newFrame.origin.y;
+            newFrame.origin.y = swapValue;
+        }
+    }
+    return newFrame;
 }
 
 @end
@@ -71,7 +86,7 @@
     //高度的算法, 只有 hud 的時候就是 hud 本身加上上下的邊框, 多 label 的話, 要在 hud 跟 label 之間多塞一個一半大小的 gap
     CGFloat centerViewHeight = inboxViewSize + messageFrame.size.height + borderGap*2 + ((self.hudMessage)?borderGap*0.5:0);
     self.centerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, centerViewWidth, centerViewHeight)];
-    [self.centerView centerInBounds:[UIScreen mainScreen].bounds];
+    self.centerView.frame = [self.centerView centerInOrientation:self.interfaceOrientation];
     self.centerView.backgroundColor = self.hudBackgroundColor;
     self.centerView.layer.cornerRadius = 5.0f;
     self.centerView.layer.masksToBounds = YES;
@@ -94,6 +109,28 @@
     
     //放到 view 裡
     [self.view addSubview:self.centerView];
+}
+
+#pragma mark - rotate
+
+//for ios8
+- (void)viewWillTransitionToSize:(CGSize)size withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator {
+    CGRect newFrame = self.centerView.frame;
+    newFrame.origin.x = size.width / 2 - newFrame.size.width / 2;
+    newFrame.origin.y = size.height / 2 - newFrame.size.height / 2;
+    __weak DaiInboxViewController *weakSelf = self;
+    [UIView animateWithDuration:[coordinator transitionDuration] animations:^{
+        weakSelf.centerView.frame = newFrame;
+    }];
+}
+
+//for ios7
+- (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration {
+    CGRect newFrame = [self.centerView centerInOrientation:toInterfaceOrientation];
+    __weak DaiInboxViewController *weakSelf = self;
+    [UIView animateWithDuration:duration animations:^{
+        weakSelf.centerView.frame = newFrame;
+    }];
 }
 
 #pragma mark - life cycle
