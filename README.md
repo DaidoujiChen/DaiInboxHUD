@@ -3,7 +3,7 @@ DaiInboxHUD
 
 這是一個模仿 google inbox 轉圈效果的 HUD.
 
-![image](https://s3-ap-northeast-1.amazonaws.com/daidoujiminecraft/Daidouji/DaiInboxHUD_20141105.gif)
+![image](https://s3-ap-northeast-1.amazonaws.com/daidoujiminecraft/Daidouji/DaiInboxHUD_20141106.gif)
 
 DaidoujiChen
 
@@ -69,4 +69,14 @@ daidoujichen@gmail.com
 	
 改成 10.0f 的時候線會變得胖胖的, 很可愛, 但是再往上加畫出來的圖就會有些怪怪的了, 這邊可以自己斟酌微調,
 
+第四個是
+
+	+ (void)setMaskColor:(UIColor *)maskColor;
+
+如果你希望 hud 跳出來的時候, 背後原來的畫面應該要覆蓋上一層薄膜, 可以利用這個 method 來達成, 預設是 clearColor, 所以背景不會被覆蓋, 如果想用一層黑色的膜蓋上, 可以像是這樣設定
+
+	[DaiInboxHUD setMaskColor:[UIColor colorWithRed:0 green:0 blue:0 alpha:0.5f]];
+	
+則會有一層 alpha 值 0.5 的黑膜蓋著, 記得一定要設 alpha, 不然背景會完全被蓋住,
+	
 需要注意的地方是, 假設專案裡面所有的 hud 都是通用同一種樣貌的話, 那麼只需要在統一的一個地方設定好客製化的值就可以了, 不需要在每次 `show` hud 時都設定一次, 不過如果專案需要各種不同的 hud 樣貌的時候, 則在每次 `show` 之前就得記得去改變成 for 某一個樣式的 hud.
