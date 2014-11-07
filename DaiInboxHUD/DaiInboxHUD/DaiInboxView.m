@@ -119,6 +119,9 @@ typedef enum {
 @property (nonatomic, assign) CGPoint circleCenter;
 @property (nonatomic, assign) CGFloat circleRadius;
 
+//預先畫好的圈圈
+@property (nonatomic, strong) UIImage *circleImage;
+
 @end
 
 @implementation DaiInboxView
@@ -189,6 +192,7 @@ typedef enum {
             }
         }
         self.rotateAngle %= 360;
+        self.circleImage = [self preDrawCircleImage];
         
         //算完以後回 main thread 囉
         dispatch_async(dispatch_get_main_queue(), ^{
@@ -198,13 +202,11 @@ typedef enum {
     });
 }
 
-#pragma mark - method override
-
-//這邊主要就只負責把圖畫出來
-- (void)drawRect:(CGRect)rect {
-    [super drawRect:rect];
-    CGContextRef context = UIGraphicsGetCurrentContext();
+- (UIImage *)preDrawCircleImage {
+    UIImage *circleImage;
     
+    UIGraphicsBeginImageContext(CGSizeMake(self.bounds.size.width,self.bounds.size.height));
+    CGContextRef context = UIGraphicsGetCurrentContext();
     //設定線條的粗細, 以及圓角
     CGContextSetLineCap(context, kCGLineCapRound);
     CGContextSetLineWidth(context, self.hudLineWidth);
@@ -224,6 +226,17 @@ typedef enum {
     
     //著色
     CGContextStrokePath(context);
+    circleImage = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    return circleImage;
+}
+
+#pragma mark - method override
+
+//這邊主要就只負責把圖畫出來
+- (void)drawRect:(CGRect)rect {
+    [super drawRect:rect];
+    [self.circleImage drawInRect:rect];
     
     //這邊改成用 afterDelay 的做法而不用 nstimer, 因為我怕有時候畫的時間因為各種原因過長, 如果只卡固定的 fps, 反而會降低 app 本身其他東西的效能
     [self performSelector:@selector(refreshCricle) withObject:nil afterDelay:1.0f / framePerSecond];
@@ -240,6 +253,7 @@ typedef enum {
         self.length = maxLength;
         self.status = CricleLengthStatusDecrease;
         self.waitingFrameCount = 0;
+        self.circleImage = [self preDrawCircleImage];
         self.circleCenter = CGPointMake(frame.size.width / 2, frame.size.height / 2);
         self.circleRadius = frame.size.width / 3;
     }
