@@ -18,6 +18,7 @@
 		0131ED691A03794B001C0DD8 /* DaiInboxView.m in Sources */ = {isa = PBXBuildFile; fileRef = 0131ED681A03794B001C0DD8 /* DaiInboxView.m */; };
 		0187ACC31A087FF800094D67 /* DaiIndoxWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 0187ACC21A087FF800094D67 /* DaiIndoxWindow.m */; };
 		0187ACC61A08817F00094D67 /* DaiInboxViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0187ACC51A08817F00094D67 /* DaiInboxViewController.m */; };
+		01D0C7781A0CB61C006AA033 /* DaiInboxDisplayLink.m in Sources */ = {isa = PBXBuildFile; fileRef = 01D0C7771A0CB61C006AA033 /* DaiInboxDisplayLink.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -52,6 +53,8 @@
 		0187ACC21A087FF800094D67 /* DaiIndoxWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DaiIndoxWindow.m; sourceTree = "<group>"; };
 		0187ACC41A08817F00094D67 /* DaiInboxViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DaiInboxViewController.h; sourceTree = "<group>"; };
 		0187ACC51A08817F00094D67 /* DaiInboxViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DaiInboxViewController.m; sourceTree = "<group>"; };
+		01D0C7761A0CB61C006AA033 /* DaiInboxDisplayLink.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DaiInboxDisplayLink.h; sourceTree = "<group>"; };
+		01D0C7771A0CB61C006AA033 /* DaiInboxDisplayLink.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DaiInboxDisplayLink.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -143,6 +146,8 @@
 				0187ACC51A08817F00094D67 /* DaiInboxViewController.m */,
 				0131ED671A03794B001C0DD8 /* DaiInboxView.h */,
 				0131ED681A03794B001C0DD8 /* DaiInboxView.m */,
+				01D0C7761A0CB61C006AA033 /* DaiInboxDisplayLink.h */,
+				01D0C7771A0CB61C006AA033 /* DaiInboxDisplayLink.m */,
 			);
 			path = DaiInboxHUD;
 			sourceTree = "<group>";
@@ -249,6 +254,7 @@
 			files = (
 				0131ED3C1A037767001C0DD8 /* AppDelegate.m in Sources */,
 				0187ACC31A087FF800094D67 /* DaiIndoxWindow.m in Sources */,
+				01D0C7781A0CB61C006AA033 /* DaiInboxDisplayLink.m in Sources */,
 				0187ACC61A08817F00094D67 /* DaiInboxViewController.m in Sources */,
 				0131ED5F1A037799001C0DD8 /* MainViewController.m in Sources */,
 				0131ED691A03794B001C0DD8 /* DaiInboxView.m in Sources */,

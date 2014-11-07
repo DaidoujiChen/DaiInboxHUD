@@ -22,7 +22,7 @@
 
 //動畫的 fps 設定, 以及最長最短時要停留的 frame 張數
 #define framePerSecond 60.0f
-#define maxWaitingFrame 30.0f
+#define maxWaitingSecond 0.5f
 
 typedef enum {
     CricleLengthStatusDecrease,
@@ -112,8 +112,8 @@ typedef enum {
 @property (nonatomic, strong) UIColor *prevColor;
 @property (nonatomic, strong) UIColor *gradualColor;
 
-//已等待張數
-@property (nonatomic, assign) NSInteger waitingFrameCount;
+//已等待時間
+@property (nonatomic, assign) NSTimeInterval waitingSecond;
 
 //固定的中心點及半徑, 不需每次計算
 @property (nonatomic, assign) CGPoint circleCenter;
@@ -122,21 +122,29 @@ typedef enum {
 //預先畫好的圈圈
 @property (nonatomic, strong) UIImage *circleImage;
 
+@property (nonatomic, strong) DaiInboxDisplayLink *displayLink;
+
 @end
 
 @implementation DaiInboxView
 
-#pragma mark - private
+#pragma mark - DaiInboxDisplayLinkDelegate
 
-//每 frame 所做的數值變動
-- (void)refreshCricle {
-    //為了不阻礙線程, 一部份的運算放到 background 做
+//用更合理的概念來做動畫這一個部分
+//以 rotateIteration 來說的話, 我們假設在 fps 60 也就是約 0.01666666666 秒要移動 4.0f 個角度
+//但是在真實的世界裡, 也許有時候會比這個數值多, 有時候則會少
+//於是我們需要用另一種更合理的概念來實現, 這邊的 deltaTime 會傳回幀與幀之前的間隔時間,
+//我假設當這個數值 > 60fps 時, 則以全速來跑, 反之, 則依比例縮減他們的變動
+//效果可以讓動畫看起來比較不會有違和感
+- (void)displayWillUpdateWithDeltaTime:(CFTimeInterval)deltaTime {
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
+        CGFloat deltaValue = MIN(1.0f, deltaTime / (1.0f / framePerSecond));
+        
         switch (self.status) {
             case CricleLengthStatusDecrease:
             {
-                self.length -= lengthIteration;
-                self.rotateAngle += rotateIteration;
+                self.length -= lengthIteration * deltaValue;
+                self.rotateAngle += rotateIteration * deltaValue;
                 
                 //當長度扣到過短時, 讓他停下來, 設定好顏色, 準備另一個階段
                 if (self.length <= minLength) {
@@ -152,9 +160,9 @@ typedef enum {
                 
             case CricleLengthStatusIncrease:
             {
-                self.length += lengthIteration;
+                self.length += lengthIteration * deltaValue;
                 CGFloat deltaLength = sin(((float)lengthIteration / 360) * M_PI_2) * 360;
-                self.rotateAngle += (rotateIteration + deltaLength);
+                self.rotateAngle += (rotateIteration + deltaLength) * deltaValue;
                 
                 //長度過長時, 讓他停下來, 準備去另一個階段
                 if (self.length >= maxLength) {
@@ -166,12 +174,12 @@ typedef enum {
                 
             case CricleLengthStatusWaiting:
             {
-                self.waitingFrameCount++;
-                self.rotateAngle += rotateIteration;
+                self.waitingSecond += deltaTime;
+                self.rotateAngle += rotateIteration * deltaValue;
                 
                 //這個狀態下需要多算一個漸變色
                 if (self.length == minLength) {
-                    CGFloat colorAPercent = ((float)self.waitingFrameCount / maxWaitingFrame);
+                    CGFloat colorAPercent = ((float)self.waitingSecond / maxWaitingSecond);
                     CGFloat colorBPercent = 1 - colorAPercent;
                     UIColor *transparentColorA = [UIColor colorWithRed:self.finalColor.r green:self.finalColor.g blue:self.finalColor.b alpha:colorAPercent];
                     UIColor *transparentColorB = [UIColor colorWithRed:self.prevColor.r green:self.prevColor.g blue:self.prevColor.b alpha:colorBPercent];
@@ -179,8 +187,8 @@ typedef enum {
                 }
                 
                 //當幀數到達指定的數量, 按照他的狀態, 分配他該去的狀態
-                if (self.waitingFrameCount == maxWaitingFrame) {
-                    self.waitingFrameCount = 0;
+                if (self.waitingSecond >= maxWaitingSecond) {
+                    self.waitingSecond = 0;
                     if (self.length == minLength) {
                         self.status = CricleLengthStatusIncrease;
                     }
@@ -202,11 +210,13 @@ typedef enum {
     });
 }
 
+#pragma mark - private
+
 - (UIImage *)preDrawCircleImage {
     UIImage *circleImage;
-    
-    UIGraphicsBeginImageContext(CGSizeMake(self.bounds.size.width,self.bounds.size.height));
+    UIGraphicsBeginImageContext(CGSizeMake(self.bounds.size.width, self.bounds.size.height));
     CGContextRef context = UIGraphicsGetCurrentContext();
+    
     //設定線條的粗細, 以及圓角
     CGContextSetLineCap(context, kCGLineCapRound);
     CGContextSetLineWidth(context, self.hudLineWidth);
@@ -237,9 +247,6 @@ typedef enum {
 - (void)drawRect:(CGRect)rect {
     [super drawRect:rect];
     [self.circleImage drawInRect:rect];
-    
-    //這邊改成用 afterDelay 的做法而不用 nstimer, 因為我怕有時候畫的時間因為各種原因過長, 如果只卡固定的 fps, 反而會降低 app 本身其他東西的效能
-    [self performSelector:@selector(refreshCricle) withObject:nil afterDelay:1.0f / framePerSecond];
 }
 
 #pragma mark - life cycle
@@ -252,10 +259,10 @@ typedef enum {
         self.rotateAngle = arc4random() % 360;
         self.length = maxLength;
         self.status = CricleLengthStatusDecrease;
-        self.waitingFrameCount = 0;
-        self.circleImage = [self preDrawCircleImage];
+        self.waitingSecond = 0;
         self.circleCenter = CGPointMake(frame.size.width / 2, frame.size.height / 2);
         self.circleRadius = frame.size.width / 3;
+        self.displayLink = [[DaiInboxDisplayLink alloc] initWithDelegate:self];
     }
     return self;
 }
@@ -265,9 +272,10 @@ typedef enum {
     if (newSuperview) {
         self.colorIndex = arc4random() % [self.hudColors count];
         self.finalColor = self.hudColors[self.colorIndex];
+        self.circleImage = [self preDrawCircleImage];
     }
     else {
-        [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(refreshCricle) object:nil];
+        [self.displayLink removeDisplayLink];
     }
 }
 
