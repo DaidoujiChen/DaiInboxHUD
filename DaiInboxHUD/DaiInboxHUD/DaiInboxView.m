@@ -181,8 +181,8 @@ typedef enum {
                 if (self.length == minLength) {
                     CGFloat colorAPercent = ((float)self.waitingSecond / maxWaitingSecond);
                     CGFloat colorBPercent = 1 - colorAPercent;
-                    UIColor *transparentColorA = [UIColor colorWithRed:self.finalColor.r green:self.finalColor.g blue:self.finalColor.b alpha:colorAPercent];
-                    UIColor *transparentColorB = [UIColor colorWithRed:self.prevColor.r green:self.prevColor.g blue:self.prevColor.b alpha:colorBPercent];
+                    UIColor *transparentColorA = [self.finalColor colorWithAlphaComponent:colorAPercent];
+                    UIColor *transparentColorB = [self.prevColor colorWithAlphaComponent:colorBPercent];;
                     self.gradualColor = [transparentColorA mixColor:transparentColorB];
                 }
                 
