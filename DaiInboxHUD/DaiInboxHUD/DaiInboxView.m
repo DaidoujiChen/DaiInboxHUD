@@ -214,7 +214,7 @@ typedef enum {
 
 - (UIImage *)preDrawCircleImage {
     UIImage *circleImage;
-    UIGraphicsBeginImageContext(CGSizeMake(self.bounds.size.width, self.bounds.size.height));
+    UIGraphicsBeginImageContextWithOptions(CGSizeMake(self.bounds.size.width, self.bounds.size.height), 0, [UIScreen mainScreen].scale);
     CGContextRef context = UIGraphicsGetCurrentContext();
     
     //設定線條的粗細, 以及圓角
