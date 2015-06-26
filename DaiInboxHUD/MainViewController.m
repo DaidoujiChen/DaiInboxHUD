@@ -27,6 +27,10 @@
     [self performSelector:@selector(hideHUD) withObject:nil afterDelay:10.0f];
 }
 
+- (IBAction)clickAction:(id)sender {
+    NSLog(@"Clicked");
+}
+
 #pragma mark - private
 
 - (void)hideHUD {

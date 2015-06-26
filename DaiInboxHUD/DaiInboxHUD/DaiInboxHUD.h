@@ -11,7 +11,7 @@
 
 @interface DaiInboxHUD : NSObject
 
-//顯示 hud
+//顯示 hud, 預設不允許使用者動作
 + (void)show;
 
 //顯示帶字的 hud
@@ -31,5 +31,8 @@
 
 //設定 hud 轉圈圈線的粗細, 預設為 2.0f, 數值大約到 10.0f 都還可以看, 到 20.0f 就不知道在幹嘛了
 + (void)setLineWidth:(CGFloat)lineWidth;
+
+//切換在 hud 過程中, 使用者是否可以有其他動作
++ (void)allowUserInteraction:(BOOL)allowUserInteraction;
 
 @end

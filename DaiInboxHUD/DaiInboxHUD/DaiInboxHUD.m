@@ -14,6 +14,12 @@
 
 @implementation DaiInboxHUD
 
+#pragma mark - DaiIndoxWindowDelegate
+
++ (BOOL)shouldHandleTouchAtPoint:(CGPoint)point {
+    return ![self allowUserInteraction];
+}
+
 #pragma mark - class method
 
 + (void)show {
@@ -71,13 +77,19 @@
     [self setHudLineWidth:lineWidth];
 }
 
++ (void)allowUserInteraction:(BOOL)allowUserInteraction {
+    [self setAllowUserInteraction:allowUserInteraction];
+}
+
 #pragma mark - objects
 
 #pragma mark hud 視窗
 
 + (DaiIndoxWindow *)hudWindow {
     if (!objc_getAssociatedObject(self, _cmd)) {
-        [self setHudWindow:[[DaiIndoxWindow alloc] initWithFrame:[UIScreen mainScreen].bounds]];
+        DaiIndoxWindow *newWindow = [[DaiIndoxWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
+        newWindow.eventDelegate = (id <DaiIndoxWindowDelegate> )self;
+        [self setHudWindow:newWindow];
     }
     return objc_getAssociatedObject(self, _cmd);
 }
@@ -131,6 +143,18 @@
         [self setHudMaskColor:[UIColor clearColor]];
     }
     return objc_getAssociatedObject(self, _cmd);
+}
+
++ (void)setAllowUserInteraction:(BOOL)allowUserInteraction {
+    objc_setAssociatedObject(self, @selector(allowUserInteraction), @(allowUserInteraction), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+}
+
++ (BOOL)allowUserInteraction {
+    if (!objc_getAssociatedObject(self, _cmd)) {
+        [self setAllowUserInteraction:NO];
+    }
+    NSNumber *allowUserInteraction = objc_getAssociatedObject(self, _cmd);
+    return allowUserInteraction.boolValue;
 }
 
 @end

@@ -10,6 +10,18 @@
 
 @implementation DaiIndoxWindow
 
+#pragma mark - method to override
+
+- (BOOL)pointInside:(CGPoint)point withEvent:(UIEvent *)event {
+    BOOL pointInside = NO;
+    if ([self.eventDelegate shouldHandleTouchAtPoint:point]) {
+        pointInside = [super pointInside:point withEvent:event];
+    }
+    return pointInside;
+}
+
+#pragma mark - life cycle
+
 - (id)initWithFrame:(CGRect)frame {
     self = [super initWithFrame:frame];
     if (self) {

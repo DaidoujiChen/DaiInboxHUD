@@ -8,6 +8,16 @@
 
 #import <UIKit/UIKit.h>
 
+@protocol DaiIndoxWindowDelegate;
+
 @interface DaiIndoxWindow : UIWindow
+
+@property (nonatomic, weak) id <DaiIndoxWindowDelegate> eventDelegate;
+
+@end
+
+@protocol DaiIndoxWindowDelegate <NSObject>
+@required
+- (BOOL)shouldHandleTouchAtPoint:(CGPoint)point;
 
 @end
