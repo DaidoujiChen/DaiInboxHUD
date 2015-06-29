@@ -137,7 +137,7 @@ typedef enum {
 //我假設當這個數值 > 60fps 時, 則以全速來跑, 反之, 則依比例縮減他們的變動
 //效果可以讓動畫看起來比較不會有違和感
 - (void)displayWillUpdateWithDeltaTime:(CFTimeInterval)deltaTime {
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         CGFloat deltaValue = MIN(1.0f, deltaTime / (1.0f / framePerSecond));
         
         switch (self.status) {
