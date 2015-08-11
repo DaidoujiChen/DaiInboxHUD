@@ -8,15 +8,20 @@
 
 #import <UIKit/UIKit.h>
 
-#import "DaiInboxView.h"
+typedef enum {
+    DaiInboxHUDTypeDefault,
+    DaiInboxHUDTypeSuccess
+} DaiInboxHUDType;
 
 @interface DaiInboxViewController : UIViewController
 
 @property (nonatomic, strong) NSArray *hudColors;
 @property (nonatomic, strong) UIColor *hudBackgroundColor;
 @property (nonatomic, strong) UIColor *hudMaskColor;
+@property (nonatomic, strong) UIColor *hudCheckmarkColor;
 @property (nonatomic, assign) CGFloat hudLineWidth;
 @property (nonatomic, strong) NSAttributedString *hudMessage;
+@property (nonatomic, assign) DaiInboxHUDType hudType;
 
 - (void)hide:(void (^)(void))completion;
 

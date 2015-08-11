@@ -7,6 +7,8 @@
 //
 
 #import "DaiInboxViewController.h"
+#import "DaiInboxView.h"
+#import "DaiSuccessView.h"
 
 #define inboxViewSize 30.0f
 #define borderGap 10.0f
@@ -48,7 +50,7 @@
 #pragma mark - instance method
 
 // hide hud 然後帶個動畫
-- (void)hide:(void (^)(void))completion {    
+- (void)hide:(void (^)(void))completion {
     __weak DaiInboxViewController *wealSelf = self;
     [UIView animateWithDuration:0.3 / 1.5 animations: ^{
         wealSelf.centerView.transform = CGAffineTransformScale(CGAffineTransformIdentity, 0.9, 0.9);
@@ -57,8 +59,8 @@
             wealSelf.centerView.transform = CGAffineTransformScale(CGAffineTransformIdentity, 1.1, 1.1);
         } completion: ^(BOOL finished) {
             [UIView animateWithDuration:0.3 / 2 animations: ^{
-                wealSelf.centerView.transform = CGAffineTransformScale(CGAffineTransformIdentity, 0.001, 0.001);;
-            } completion:^(BOOL finished) {
+                wealSelf.centerView.transform = CGAffineTransformScale(CGAffineTransformIdentity, 0.001, 0.001);
+            } completion: ^(BOOL finished) {
                 completion();
             }];
         }];
@@ -81,10 +83,10 @@
     
     //設定好 centerview 的大小
     //寬度的算法, 取 hud 本身或是 label 的最大者, 加上左右兩旁的邊框
-    CGFloat centerViewWidth = MAX(inboxViewSize, messageFrame.size.width) + borderGap*2;
+    CGFloat centerViewWidth = MAX(inboxViewSize, messageFrame.size.width) + borderGap * 2;
     
     //高度的算法, 只有 hud 的時候就是 hud 本身加上上下的邊框, 多 label 的話, 要在 hud 跟 label 之間多塞一個一半大小的 gap
-    CGFloat centerViewHeight = inboxViewSize + messageFrame.size.height + borderGap*2 + ((self.hudMessage)?borderGap*0.5:0);
+    CGFloat centerViewHeight = inboxViewSize + messageFrame.size.height + borderGap * 2 + ((self.hudMessage) ? borderGap * 0.5 : 0);
     self.centerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, centerViewWidth, centerViewHeight)];
     self.centerView.frame = [self.centerView centerInOrientation:self.interfaceOrientation];
     self.centerView.backgroundColor = self.hudBackgroundColor;
@@ -95,11 +97,28 @@
     CGFloat objectHeight = borderGap;
     
     //加入 hud 主體
-    DaiInboxView *inboxView = [[DaiInboxView alloc] initWithFrame:CGRectMake(self.centerView.frame.size.width / 2 - inboxViewSize / 2, objectHeight, inboxViewSize, inboxViewSize)];
-    inboxView.hudColors = self.hudColors;
-    inboxView.hudLineWidth = self.hudLineWidth;
-    [self.centerView addSubview:inboxView];
-    objectHeight += inboxView.frame.size.height + ((self.hudMessage)?borderGap*0.5:0);
+    UIView *hudView = nil;
+    switch (self.hudType) {
+        case DaiInboxHUDTypeDefault:
+        {
+            DaiInboxView *inboxView = [[DaiInboxView alloc] initWithFrame:CGRectMake(self.centerView.frame.size.width / 2 - inboxViewSize / 2, objectHeight, inboxViewSize, inboxViewSize)];
+            inboxView.hudColors = self.hudColors;
+            inboxView.hudLineWidth = self.hudLineWidth;
+            hudView = inboxView;
+            break;
+        }
+            
+        case DaiInboxHUDTypeSuccess:
+        {
+            DaiSuccessView *successView = [[DaiSuccessView alloc] initWithFrame:CGRectMake(self.centerView.frame.size.width / 2 - inboxViewSize / 2, objectHeight, inboxViewSize, inboxViewSize)];
+            successView.hudCheckmarkColor = self.hudCheckmarkColor;
+            successView.hudLineWidth = self.hudLineWidth;
+            hudView = successView;
+            break;
+        }
+    }
+    [self.centerView addSubview:hudView];
+    objectHeight += hudView.frame.size.height + ((self.hudMessage) ? borderGap * 0.5 : 0);
     
     //如果有 label 的話就加
     if (self.hudMessage) {
@@ -114,12 +133,12 @@
 #pragma mark - rotate
 
 //for ios8
-- (void)viewWillTransitionToSize:(CGSize)size withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator {
+- (void)viewWillTransitionToSize:(CGSize)size withTransitionCoordinator:(id <UIViewControllerTransitionCoordinator> )coordinator {
     CGRect newFrame = self.centerView.frame;
     newFrame.origin.x = size.width / 2 - newFrame.size.width / 2;
     newFrame.origin.y = size.height / 2 - newFrame.size.height / 2;
     __weak DaiInboxViewController *weakSelf = self;
-    [UIView animateWithDuration:[coordinator transitionDuration] animations:^{
+    [UIView animateWithDuration:[coordinator transitionDuration] animations: ^{
         weakSelf.centerView.frame = newFrame;
     }];
 }
@@ -128,7 +147,7 @@
 - (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration {
     CGRect newFrame = [self.centerView centerInOrientation:toInterfaceOrientation];
     __weak DaiInboxViewController *weakSelf = self;
-    [UIView animateWithDuration:duration animations:^{
+    [UIView animateWithDuration:duration animations: ^{
         weakSelf.centerView.frame = newFrame;
     }];
 }

@@ -7,8 +7,8 @@
 //
 
 #import "DaiInboxView.h"
-
 #import <objc/runtime.h>
+#import "UIColor+MixColor.h"
 
 #define degreesToRadian(angle) (M_PI * (angle) / 180.0)
 
@@ -29,75 +29,6 @@ typedef enum {
     CricleLengthStatusIncrease,
     CricleLengthStatusWaiting
 } CricleLengthStatus;
-
-@interface UIColor (MixColor)
-
-@property (nonatomic, readonly) CGFloat r;
-@property (nonatomic, readonly) CGFloat g;
-@property (nonatomic, readonly) CGFloat b;
-@property (nonatomic, readonly) CGFloat a;
-
-- (UIColor *)mixColor:(UIColor *)otherColor;
-
-@end
-
-@implementation UIColor (MixColor)
-
-@dynamic r, g, b, a;
-
-- (CGFloat)r {
-    return [[self rgba][@"r"] floatValue];
-}
-
-- (CGFloat)g {
-    return [[self rgba][@"g"] floatValue];
-}
-
-- (CGFloat)b {
-    return [[self rgba][@"b"] floatValue];
-}
-
-- (CGFloat)a {
-    return [[self rgba][@"a"] floatValue];
-}
-
-- (UIColor *)mixColor:(UIColor *)otherColor {
-    //混色的公式
-    //http://stackoverflow.com/questions/726549/algorithm-for-additive-color-mixing-for-rgb-values
-    CGFloat newAlpha = 1 - (1 - self.a) * (1 - otherColor.a);
-    CGFloat newRed = self.r * self.a / newAlpha + otherColor.r * otherColor.a * (1 - self.a) / newAlpha;
-    CGFloat newGreen = self.g * self.a / newAlpha + otherColor.g * otherColor.a * (1 - self.a) / newAlpha;
-    CGFloat newBlue = self.b * self.a / newAlpha + otherColor.b * otherColor.a * (1 - self.a) / newAlpha;
-    return [UIColor colorWithRed:newRed green:newGreen blue:newBlue alpha:newAlpha];
-}
-
-- (NSDictionary *)rgba {
-    NSDictionary *rgba = objc_getAssociatedObject(self, _cmd);
-    if (!rgba) {
-        CGFloat red = 0.0f, green = 0.0f, blue = 0.0f, alpha = 0.0f;
-        if ([self getRed:&red green:&green blue:&blue alpha:&alpha]) {
-            [self setRgba:@{ @"r":@(red), @"g":@(green), @"b":@(blue), @"a":@(alpha) }];
-        }
-        else {
-            //http://stackoverflow.com/questions/4700168/get-rgb-value-from-uicolor-presets
-            CGColorSpaceRef rgbColorSpace = CGColorSpaceCreateDeviceRGB();
-            unsigned char resultingPixel[3];
-            CGContextRef context = CGBitmapContextCreate(&resultingPixel, 1, 1, 8, 4, rgbColorSpace, (CGBitmapInfo)kCGImageAlphaNone);
-            CGContextSetFillColorWithColor(context, [self CGColor]);
-            CGContextFillRect(context, CGRectMake(0, 0, 1, 1));
-            CGContextRelease(context);
-            CGColorSpaceRelease(rgbColorSpace);
-            [self setRgba:@{ @"r":@(resultingPixel[0]), @"g":@(resultingPixel[1]), @"b":@(resultingPixel[2]), @"a":@(1.0f) }];
-        }
-    }
-    return objc_getAssociatedObject(self, _cmd);
-}
-
-- (void)setRgba:(NSDictionary *)rgba {
-    objc_setAssociatedObject(self, @selector(rgba), rgba, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-}
-
-@end
 
 @interface DaiInboxView ()
 
@@ -137,76 +68,81 @@ typedef enum {
 //我假設當這個數值 > 60fps 時, 則以全速來跑, 反之, 則依比例縮減他們的變動
 //效果可以讓動畫看起來比較不會有違和感
 - (void)displayWillUpdateWithDeltaTime:(CFTimeInterval)deltaTime {
+    __weak DaiInboxView *weakSelf = self;
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        CGFloat deltaValue = MIN(1.0f, deltaTime / (1.0f / framePerSecond));
-        
-        switch (self.status) {
-            case CricleLengthStatusDecrease:
-            {
-                self.length -= lengthIteration * deltaValue;
-                self.rotateAngle += rotateIteration * deltaValue;
-                
-                //當長度扣到過短時, 讓他停下來, 設定好顏色, 準備另一個階段
-                if (self.length <= minLength) {
-                    self.length = minLength;
-                    self.status = CricleLengthStatusWaiting;
-                    self.colorIndex++;
-                    self.colorIndex %= [self.hudColors count];
-                    self.prevColor = self.finalColor;
-                    self.finalColor = self.hudColors[self.colorIndex];
-                }
-                break;
-            }
-                
-            case CricleLengthStatusIncrease:
-            {
-                self.length += lengthIteration * deltaValue;
-                CGFloat deltaLength = sin(((float)lengthIteration / 360) * M_PI_2) * 360;
-                self.rotateAngle += (rotateIteration + deltaLength) * deltaValue;
-                
-                //長度過長時, 讓他停下來, 準備去另一個階段
-                if (self.length >= maxLength) {
-                    self.length = maxLength;
-                    self.status = CricleLengthStatusWaiting;
-                }
-                break;
-            }
-                
-            case CricleLengthStatusWaiting:
-            {
-                self.waitingSecond += deltaTime;
-                self.rotateAngle += rotateIteration * deltaValue;
-                
-                //這個狀態下需要多算一個漸變色
-                if (self.length == minLength) {
-                    CGFloat colorAPercent = ((float)self.waitingSecond / maxWaitingSecond);
-                    CGFloat colorBPercent = 1 - colorAPercent;
-                    UIColor *transparentColorA = [self.finalColor colorWithAlphaComponent:colorAPercent];
-                    UIColor *transparentColorB = [self.prevColor colorWithAlphaComponent:colorBPercent];;
-                    self.gradualColor = [transparentColorA mixColor:transparentColorB];
-                }
-                
-                //當幀數到達指定的數量, 按照他的狀態, 分配他該去的狀態
-                if (self.waitingSecond >= maxWaitingSecond) {
-                    self.waitingSecond = 0;
-                    if (self.length == minLength) {
-                        self.status = CricleLengthStatusIncrease;
+        if (weakSelf) {
+            __strong DaiInboxView *strongSelf = weakSelf;
+            
+            CGFloat deltaValue = MIN(1.0f, deltaTime / (1.0f / framePerSecond));
+            
+            switch (strongSelf.status) {
+                case CricleLengthStatusDecrease:
+                {
+                    strongSelf.length -= lengthIteration * deltaValue;
+                    strongSelf.rotateAngle += rotateIteration * deltaValue;
+                    
+                    //當長度扣到過短時, 讓他停下來, 設定好顏色, 準備另一個階段
+                    if (strongSelf.length <= minLength) {
+                        strongSelf.length = minLength;
+                        strongSelf.status = CricleLengthStatusWaiting;
+                        strongSelf.colorIndex++;
+                        strongSelf.colorIndex %= [strongSelf.hudColors count];
+                        strongSelf.prevColor = strongSelf.finalColor;
+                        strongSelf.finalColor = strongSelf.hudColors[strongSelf.colorIndex];
                     }
-                    else {
-                        self.status = CricleLengthStatusDecrease;
-                    }
+                    break;
                 }
-                break;
+                    
+                case CricleLengthStatusIncrease:
+                {
+                    strongSelf.length += lengthIteration * deltaValue;
+                    CGFloat deltaLength = sin(((float)lengthIteration / 360) * M_PI_2) * 360;
+                    strongSelf.rotateAngle += (rotateIteration + deltaLength) * deltaValue;
+                    
+                    //長度過長時, 讓他停下來, 準備去另一個階段
+                    if (strongSelf.length >= maxLength) {
+                        strongSelf.length = maxLength;
+                        strongSelf.status = CricleLengthStatusWaiting;
+                    }
+                    break;
+                }
+                    
+                case CricleLengthStatusWaiting:
+                {
+                    strongSelf.waitingSecond += deltaTime;
+                    strongSelf.rotateAngle += rotateIteration * deltaValue;
+                    
+                    //這個狀態下需要多算一個漸變色
+                    if (strongSelf.length == minLength) {
+                        CGFloat colorAPercent = ((float)strongSelf.waitingSecond / maxWaitingSecond);
+                        CGFloat colorBPercent = 1 - colorAPercent;
+                        UIColor *transparentColorA = [strongSelf.finalColor colorWithAlphaComponent:colorAPercent];
+                        UIColor *transparentColorB = [strongSelf.prevColor colorWithAlphaComponent:colorBPercent];;
+                        strongSelf.gradualColor = [transparentColorA mixColor:transparentColorB];
+                    }
+                    
+                    //當幀數到達指定的數量, 按照他的狀態, 分配他該去的狀態
+                    if (strongSelf.waitingSecond >= maxWaitingSecond) {
+                        strongSelf.waitingSecond = 0;
+                        if (strongSelf.length == minLength) {
+                            strongSelf.status = CricleLengthStatusIncrease;
+                        }
+                        else {
+                            strongSelf.status = CricleLengthStatusDecrease;
+                        }
+                    }
+                    break;
+                }
             }
+            strongSelf.rotateAngle %= 360;
+            strongSelf.circleImage = [strongSelf preDrawCircleImage];
+            
+            //算完以後回 main thread 囉
+            dispatch_async(dispatch_get_main_queue(), ^{
+                strongSelf.transform = CGAffineTransformMakeRotation(degreesToRadian(strongSelf.rotateAngle));
+                [strongSelf setNeedsDisplay];
+            });
         }
-        self.rotateAngle %= 360;
-        self.circleImage = [self preDrawCircleImage];
-        
-        //算完以後回 main thread 囉
-        dispatch_async(dispatch_get_main_queue(), ^{
-            self.transform = CGAffineTransformMakeRotation(degreesToRadian(self.rotateAngle));
-            [self setNeedsDisplay];
-        });
     });
 }
 

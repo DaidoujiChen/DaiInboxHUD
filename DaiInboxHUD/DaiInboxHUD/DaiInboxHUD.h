@@ -14,14 +14,23 @@
 //顯示 hud, 預設不允許使用者動作
 + (void)show;
 
+//顯示成功動畫
++ (void)showSuccess;
+
 //顯示帶字的 hud
 + (void)showMessage:(NSAttributedString *)message;
+
+//顯示成功的動畫加字樣
++ (void)showSuccessMessage:(NSAttributedString *)message;
 
 //隱藏 hud
 + (void)hide;
 
 //設定自己想要的顏色循環, 預設是 紅 -> 綠 -> 黃 -> 藍 -> loop, 起始為哪一個則為隨機, 建議設定兩個顏色以上
 + (void)setColors:(NSArray *)colors;
+
+//設定打勾勾顏色
++ (void)setCheckmarkColor:(UIColor *)checkmarkColor;
 
 //設定 hud 的背景顏色, 預設為 0.65 alpha 的黑色
 + (void)setBackgroundColor:(UIColor *)backgroundColor;

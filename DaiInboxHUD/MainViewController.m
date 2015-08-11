@@ -23,8 +23,20 @@
     UIColor *textColor = [UIColor blackColor];
     NSDictionary *attributes = @{ NSForegroundColorAttributeName : textColor, NSFontAttributeName : font, NSTextEffectAttributeName : NSTextEffectLetterpressStyle };
     NSAttributedString *attributedString = [[NSAttributedString alloc] initWithString:@"Loading" attributes:attributes];
-    [DaiInboxHUD showMessage:attributedString];
-    [self performSelector:@selector(hideHUD) withObject:nil afterDelay:10.0f];
+    
+    switch (arc4random()%2) {
+        case 0:
+            [DaiInboxHUD showMessage:attributedString];
+            break;
+            
+        case 1:
+            [DaiInboxHUD showSuccessMessage:attributedString];
+            break;
+            
+        default:
+            break;
+    }
+    [self performSelector:@selector(hideHUD) withObject:nil afterDelay:3.0f];
 }
 
 - (IBAction)clickAction:(id)sender {
@@ -53,6 +65,9 @@
     
     //想要的線條粗度
     [DaiInboxHUD setLineWidth:4.0f];
+    
+    //打勾要顯示的顏色
+    [DaiInboxHUD setCheckmarkColor:[UIColor redColor]];
     
     //當然也都可以不設, 使用預設帶的值
 }

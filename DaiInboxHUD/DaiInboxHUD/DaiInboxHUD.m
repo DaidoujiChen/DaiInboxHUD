@@ -8,7 +8,6 @@
 
 #import "DaiInboxHUD.h"
 #import <objc/runtime.h>
-
 #import "DaiIndoxWindow.h"
 #import "DaiInboxViewController.h"
 
@@ -20,28 +19,49 @@
     return ![self allowUserInteraction];
 }
 
+#pragma mark - private class method
+
++ (DaiInboxViewController *)inboxViewControllerByType:(DaiInboxHUDType)type andMessage:(NSAttributedString *)message {
+    DaiInboxViewController *inboxViewController = [DaiInboxViewController new];
+    inboxViewController.hudColors = [self hudColors];
+    inboxViewController.hudBackgroundColor = [self hudBackgroundColor];
+    inboxViewController.hudMaskColor = [self hudMaskColor];
+    inboxViewController.hudLineWidth = [self hudLineWidth];
+    inboxViewController.hudCheckmarkColor = [self hudCheckmarkColor];
+    inboxViewController.hudMessage = message;
+    inboxViewController.hudType = type;
+    return inboxViewController;
+}
+
 #pragma mark - class method
 
 + (void)show {
     [self showMessage:nil];
 }
 
++ (void)showSuccess {
+    [self showSuccessMessage:nil];
+}
+
 + (void)showMessage:(NSAttributedString *)message {
-    DaiInboxViewController *inboxViewController = [DaiInboxViewController new];
-    inboxViewController.hudColors = [self hudColors];
-    inboxViewController.hudBackgroundColor = [self hudBackgroundColor];
-    inboxViewController.hudMaskColor = [self hudMaskColor];
-    inboxViewController.hudLineWidth = [self hudLineWidth];
-    inboxViewController.hudMessage = message;
-    [self hudWindow].rootViewController = inboxViewController;
+    [self hudWindow].rootViewController = [self inboxViewControllerByType:DaiInboxHUDTypeDefault andMessage:message];
+    [[self hudWindow] makeKeyAndVisible];
+}
+
++ (void)showSuccessMessage:(NSAttributedString *)message {
+    [self hudWindow].rootViewController = [self inboxViewControllerByType:DaiInboxHUDTypeSuccess andMessage:message];
     [[self hudWindow] makeKeyAndVisible];
 }
 
 + (void)hide {
+    __weak id weakSelf = self;
     [[self hudWindow].rootViewController performSelector:@selector(hide:) withObject: ^{
-        [self hudWindow].hidden = YES;
-        [self setHudWindow:nil];
-        [[UIApplication sharedApplication].keyWindow makeKeyWindow];
+        if (weakSelf) {
+            __strong id strongSelf = weakSelf;
+            [strongSelf hudWindow].hidden = YES;
+            [strongSelf setHudWindow:nil];
+            [[UIApplication sharedApplication].keyWindow makeKeyWindow];
+        }
     }];
 }
 
@@ -63,6 +83,10 @@
     else {
         NSLog(@"填入的顏色不被採用, 建議要填入一個以上的顏色, 或是元素不合法.");
     }
+}
+
++ (void)setCheckmarkColor:(UIColor *)checkmarkColor {
+    [self setHudCheckmarkColor:checkmarkColor];
 }
 
 + (void)setBackgroundColor:(UIColor *)backgroundColor {
@@ -107,6 +131,17 @@
 + (NSArray *)hudColors {
     if (!objc_getAssociatedObject(self, _cmd)) {
         [self setHudColors:@[[UIColor redColor], [UIColor greenColor], [UIColor yellowColor], [UIColor blueColor]]];
+    }
+    return objc_getAssociatedObject(self, _cmd);
+}
+
++ (void)setHudCheckmarkColor:(UIColor *)hudCheckmarkColor {
+    objc_setAssociatedObject(self, @selector(hudCheckmarkColor), hudCheckmarkColor, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+}
+
++ (UIColor *)hudCheckmarkColor {
+    if (!objc_getAssociatedObject(self, _cmd)) {
+        [self setHudCheckmarkColor:[UIColor colorWithRed:160.0f / 255.0f green:203.0f / 255.0f blue:126.0f / 255.0f alpha:1.0f]];
     }
     return objc_getAssociatedObject(self, _cmd);
 }

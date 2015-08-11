@@ -7,7 +7,6 @@
 //
 
 #import <UIKit/UIKit.h>
-
 #import "DaiInboxDisplayLink.h"
 
 @interface DaiInboxView : UIView <DaiInboxDisplayLinkDelegate>
