@@ -5,6 +5,14 @@ DaiInboxHUD
 
 ![image](https://s3-ap-northeast-1.amazonaws.com/daidoujiminecraft/Daidouji/DaiInboxHUD_20141106.gif)
 
+加入成功時候打勾的動畫
+
+![image](https://s3-ap-northeast-1.amazonaws.com/daidoujiminecraft/Daidouji/DaiInboxHUDSuccess.gif)
+
+失敗時候畫叉叉的動畫
+
+![image](https://s3-ap-northeast-1.amazonaws.com/daidoujiminecraft/Daidouji/DaiInboxHUDFail.gif)
+
 DaidoujiChen
 
 daidoujichen@gmail.com
@@ -32,8 +40,6 @@ daidoujichen@gmail.com
 要他消失的時候 call
 
 	[DaiInboxHUD hide];
-	
-就沒了...囧rz, 非常的貧乏. 過一陣子比較多功能實現出來也比較健全的時候, 再來看怎麼樣讓他變成用 cocoapod 裝吧.
 
 客製化
 ===========
