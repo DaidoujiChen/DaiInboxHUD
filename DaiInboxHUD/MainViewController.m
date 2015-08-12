@@ -24,13 +24,17 @@
     NSDictionary *attributes = @{ NSForegroundColorAttributeName : textColor, NSFontAttributeName : font, NSTextEffectAttributeName : NSTextEffectLetterpressStyle };
     NSAttributedString *attributedString = [[NSAttributedString alloc] initWithString:@"Loading" attributes:attributes];
     
-    switch (arc4random()%2) {
+    switch (arc4random() % 3) {
         case 0:
             [DaiInboxHUD showMessage:attributedString];
             break;
             
         case 1:
             [DaiInboxHUD showSuccessMessage:attributedString];
+            break;
+            
+        case 2:
+            [DaiInboxHUD showFail:attributedString];
             break;
             
         default:
@@ -67,7 +71,10 @@
     [DaiInboxHUD setLineWidth:4.0f];
     
     //打勾要顯示的顏色
-    [DaiInboxHUD setCheckmarkColor:[UIColor redColor]];
+    [DaiInboxHUD setCheckmarkColor:[UIColor greenColor]];
+    
+    //叉叉要顯示的顏色
+    [DaiInboxHUD setCrossColor:[UIColor redColor]];
     
     //當然也都可以不設, 使用預設帶的值
 }

@@ -10,7 +10,8 @@
 
 typedef enum {
     DaiInboxHUDTypeDefault,
-    DaiInboxHUDTypeSuccess
+    DaiInboxHUDTypeSuccess,
+    DaiInboxHUDTypeFail
 } DaiInboxHUDType;
 
 @interface DaiInboxViewController : UIViewController
@@ -19,6 +20,7 @@ typedef enum {
 @property (nonatomic, strong) UIColor *hudBackgroundColor;
 @property (nonatomic, strong) UIColor *hudMaskColor;
 @property (nonatomic, strong) UIColor *hudCheckmarkColor;
+@property (nonatomic, strong) UIColor *hudCrossColor;
 @property (nonatomic, assign) CGFloat hudLineWidth;
 @property (nonatomic, strong) NSAttributedString *hudMessage;
 @property (nonatomic, assign) DaiInboxHUDType hudType;

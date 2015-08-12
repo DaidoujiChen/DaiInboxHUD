@@ -9,6 +9,7 @@
 #import "DaiInboxViewController.h"
 #import "DaiInboxView.h"
 #import "DaiSuccessView.h"
+#import "DaiFailView.h"
 
 #define inboxViewSize 30.0f
 #define borderGap 10.0f
@@ -114,6 +115,15 @@
             successView.hudCheckmarkColor = self.hudCheckmarkColor;
             successView.hudLineWidth = self.hudLineWidth;
             hudView = successView;
+            break;
+        }
+            
+        case DaiInboxHUDTypeFail:
+        {
+            DaiFailView *failView = [[DaiFailView alloc] initWithFrame:CGRectMake(self.centerView.frame.size.width / 2 - inboxViewSize / 2, objectHeight, inboxViewSize, inboxViewSize)];
+            failView.hudCrossColor = self.hudCrossColor;
+            failView.hudLineWidth = self.hudLineWidth;
+            hudView = failView;
             break;
         }
     }

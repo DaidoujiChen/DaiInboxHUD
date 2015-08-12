@@ -1,18 +1,18 @@
 //
-//  DaiSuccessView.m
+//  DaiFailView.m
 //  DaiInboxHUD
 //
-//  Created by DaidoujiChen on 2015/8/11.
+//  Created by DaidoujiChen on 2015/8/12.
 //  Copyright (c) 2015年 ChilunChen. All rights reserved.
 //
 
-#import "DaiSuccessView.h"
+#import "DaiFailView.h"
 #import "UIColor+MixColor.h"
 
-#define lengthIteration 0.8f
+#define lengthIteration 1.6f
 #define framePerSecond 60.0f
 
-@interface DaiSuccessView ()
+@interface DaiFailView ()
 
 @property (nonatomic, strong) NSArray *drawPath;
 @property (nonatomic, assign) CGFloat length;
@@ -21,15 +21,15 @@
 
 @end
 
-@implementation DaiSuccessView
+@implementation DaiFailView
 
 #pragma mark - DaiInboxDisplayLinkDelegate
 
 - (void)displayWillUpdateWithDeltaTime:(CFTimeInterval)deltaTime {
-    __weak DaiSuccessView *weakSelf = self;
+    __weak DaiFailView *weakSelf = self;
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         if (weakSelf) {
-            __strong DaiSuccessView *strongSelf = weakSelf;
+            __strong DaiFailView *strongSelf = weakSelf;
             
             CGFloat deltaValue = MIN(1.0f, deltaTime / (1.0f / framePerSecond));
             
@@ -61,25 +61,35 @@
     
     //劃勾勾的線
     CGFloat length = self.length;
-    CGPoint firstPoint = [[self.drawPath firstObject] CGPointValue];
-    CGContextMoveToPoint(context, firstPoint.x, firstPoint.y);
-    for (NSInteger index = 0; index < self.drawPath.count - 1; index++) {
-        CGPoint pointA = [self.drawPath[index] CGPointValue];
-        CGPoint pointB = [self.drawPath[index + 1] CGPointValue];
-        CGFloat distance = [self distanceA:pointA toB:pointB];
-        if (length < distance) {
-            CGFloat percentA =  length / distance;
-            CGFloat percentB = 1 - percentA;
-            CGPoint newPoint = CGPointMake(pointA.x * percentB + pointB.x * percentA, pointA.y * percentB + pointB.y * percentA);
-            CGContextAddLineToPoint(context, newPoint.x, newPoint.y);
+    for (NSInteger index = 0; index < self.drawPath.count; index++) {
+        NSArray *subArray = self.drawPath[index];
+        CGPoint firstPoint = [[subArray firstObject] CGPointValue];
+        CGContextMoveToPoint(context, firstPoint.x, firstPoint.y);
+        
+        BOOL isBreak = NO;
+        for (NSInteger subIndex = 0; subIndex < subArray.count - 1; subIndex++) {
+            CGPoint pointA = [subArray[subIndex] CGPointValue];
+            CGPoint pointB = [subArray[subIndex + 1] CGPointValue];
+            CGFloat distance = [self distanceA:pointA toB:pointB];
+            if (length < distance) {
+                CGFloat percentA =  length / distance;
+                CGFloat percentB = 1 - percentA;
+                CGPoint newPoint = CGPointMake(pointA.x * percentB + pointB.x * percentA, pointA.y * percentB + pointB.y * percentA);
+                CGContextAddLineToPoint(context, newPoint.x, newPoint.y);
+                isBreak = YES;
+                break;
+            }
+            else {
+                CGContextAddLineToPoint(context, pointB.x, pointB.y);
+                length -= distance;
+            }
+        }
+        
+        if (isBreak) {
             break;
         }
-        else {
-            CGContextAddLineToPoint(context, pointB.x, pointB.y);
-            length -= distance;
-        }
     }
-    CGContextSetRGBStrokeColor(context, self.hudCheckmarkColor.r, self.hudCheckmarkColor.g, self.hudCheckmarkColor.b, self.hudCheckmarkColor.a);
+    CGContextSetRGBStrokeColor(context, self.hudCrossColor.r, self.hudCrossColor.g, self.hudCrossColor.b, self.hudCrossColor.a);
     
     //著色
     CGContextStrokePath(context);
@@ -103,7 +113,7 @@
     if (self) {
         //初始值
         self.backgroundColor = [UIColor clearColor];
-        self.drawPath = @[[NSValue valueWithCGPoint:CGPointMake(CGRectGetWidth(self.bounds) * 0.25f, CGRectGetHeight(self.bounds) * 0.5f)], [NSValue valueWithCGPoint:CGPointMake(CGRectGetWidth(self.bounds) * 0.5f, CGRectGetHeight(self.bounds) * 0.75f)], [NSValue valueWithCGPoint:CGPointMake(CGRectGetWidth(self.bounds) * 0.85f, CGRectGetHeight(self.bounds) * 0.25f)]];
+        self.drawPath = @[@[[NSValue valueWithCGPoint:CGPointMake(CGRectGetWidth(self.bounds) * 0.15f, CGRectGetHeight(self.bounds) * 0.15f)], [NSValue valueWithCGPoint:CGPointMake(CGRectGetWidth(self.bounds) * 0.85f, CGRectGetHeight(self.bounds) * 0.85f)]], @[[NSValue valueWithCGPoint:CGPointMake(CGRectGetWidth(self.bounds) * 0.85f, CGRectGetHeight(self.bounds) * 0.15f)], [NSValue valueWithCGPoint:CGPointMake(CGRectGetWidth(self.bounds) * 0.15f, CGRectGetHeight(self.bounds) * 0.85f)]]];
         self.length = 0;
         self.displayLink = [[DaiInboxDisplayLink alloc] initWithDelegate:self];
     }

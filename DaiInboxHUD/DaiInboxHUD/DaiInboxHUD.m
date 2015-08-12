@@ -28,6 +28,7 @@
     inboxViewController.hudMaskColor = [self hudMaskColor];
     inboxViewController.hudLineWidth = [self hudLineWidth];
     inboxViewController.hudCheckmarkColor = [self hudCheckmarkColor];
+    inboxViewController.hudCrossColor = [self hudCrossColor];
     inboxViewController.hudMessage = message;
     inboxViewController.hudType = type;
     return inboxViewController;
@@ -43,6 +44,10 @@
     [self showSuccessMessage:nil];
 }
 
++ (void)showFail {
+    [self showFail:nil];
+}
+
 + (void)showMessage:(NSAttributedString *)message {
     [self hudWindow].rootViewController = [self inboxViewControllerByType:DaiInboxHUDTypeDefault andMessage:message];
     [[self hudWindow] makeKeyAndVisible];
@@ -50,6 +55,11 @@
 
 + (void)showSuccessMessage:(NSAttributedString *)message {
     [self hudWindow].rootViewController = [self inboxViewControllerByType:DaiInboxHUDTypeSuccess andMessage:message];
+    [[self hudWindow] makeKeyAndVisible];
+}
+
++ (void)showFail:(NSAttributedString *)message {
+    [self hudWindow].rootViewController = [self inboxViewControllerByType:DaiInboxHUDTypeFail andMessage:message];
     [[self hudWindow] makeKeyAndVisible];
 }
 
@@ -87,6 +97,10 @@
 
 + (void)setCheckmarkColor:(UIColor *)checkmarkColor {
     [self setHudCheckmarkColor:checkmarkColor];
+}
+
++ (void)setCrossColor:(UIColor *)crossColor {
+    [self setHudCrossColor:crossColor];
 }
 
 + (void)setBackgroundColor:(UIColor *)backgroundColor {
@@ -141,7 +155,18 @@
 
 + (UIColor *)hudCheckmarkColor {
     if (!objc_getAssociatedObject(self, _cmd)) {
-        [self setHudCheckmarkColor:[UIColor colorWithRed:160.0f / 255.0f green:203.0f / 255.0f blue:126.0f / 255.0f alpha:1.0f]];
+        [self setHudCheckmarkColor:[UIColor greenColor]];
+    }
+    return objc_getAssociatedObject(self, _cmd);
+}
+
++ (void)setHudCrossColor:(UIColor *)hudCrossColor {
+    objc_setAssociatedObject(self, @selector(hudCrossColor), hudCrossColor, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+}
+
++ (UIColor *)hudCrossColor {
+    if (!objc_getAssociatedObject(self, _cmd)) {
+        [self setHudCrossColor:[UIColor redColor]];
     }
     return objc_getAssociatedObject(self, _cmd);
 }

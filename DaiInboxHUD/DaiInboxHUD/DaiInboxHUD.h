@@ -17,11 +17,17 @@
 //顯示成功動畫
 + (void)showSuccess;
 
+//顯示失敗動畫
++ (void)showFail;
+
 //顯示帶字的 hud
 + (void)showMessage:(NSAttributedString *)message;
 
 //顯示成功的動畫加字樣
 + (void)showSuccessMessage:(NSAttributedString *)message;
+
+//顯示失敗的動畫加字樣
++ (void)showFail:(NSAttributedString *)message;
 
 //隱藏 hud
 + (void)hide;
@@ -31,6 +37,9 @@
 
 //設定打勾勾顏色
 + (void)setCheckmarkColor:(UIColor *)checkmarkColor;
+
+//設定叉叉顏色
++ (void)setCrossColor:(UIColor *)crossColor;
 
 //設定 hud 的背景顏色, 預設為 0.65 alpha 的黑色
 + (void)setBackgroundColor:(UIColor *)backgroundColor;
