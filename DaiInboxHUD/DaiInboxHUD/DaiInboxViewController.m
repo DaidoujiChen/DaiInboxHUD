@@ -8,8 +8,7 @@
 
 #import "DaiInboxViewController.h"
 #import "DaiInboxView.h"
-#import "DaiSuccessView.h"
-#import "DaiFailView.h"
+#import "DaiDrawPathView.h"
 
 #define inboxViewSize 30.0f
 #define borderGap 10.0f
@@ -111,18 +110,22 @@
             
         case DaiInboxHUDTypeSuccess:
         {
-            DaiSuccessView *successView = [[DaiSuccessView alloc] initWithFrame:CGRectMake(self.centerView.frame.size.width / 2 - inboxViewSize / 2, objectHeight, inboxViewSize, inboxViewSize)];
-            successView.hudCheckmarkColor = self.hudCheckmarkColor;
+            DaiDrawPathView *successView = [[DaiDrawPathView alloc] initWithFrame:CGRectMake(self.centerView.frame.size.width / 2 - inboxViewSize / 2, objectHeight, inboxViewSize, inboxViewSize)];
+            successView.pathColor = self.hudCheckmarkColor;
             successView.hudLineWidth = self.hudLineWidth;
+            successView.drawPath = @[@[[NSValue valueWithCGPoint:CGPointMake(inboxViewSize * 0.25f, inboxViewSize * 0.5f)], [NSValue valueWithCGPoint:CGPointMake(inboxViewSize * 0.5f, inboxViewSize * 0.75f)], [NSValue valueWithCGPoint:CGPointMake(inboxViewSize * 0.85f, inboxViewSize * 0.25f)]]];
+            successView.lengthIteration = 0.8f;
             hudView = successView;
             break;
         }
             
         case DaiInboxHUDTypeFail:
         {
-            DaiFailView *failView = [[DaiFailView alloc] initWithFrame:CGRectMake(self.centerView.frame.size.width / 2 - inboxViewSize / 2, objectHeight, inboxViewSize, inboxViewSize)];
-            failView.hudCrossColor = self.hudCrossColor;
+            DaiDrawPathView *failView = [[DaiDrawPathView alloc] initWithFrame:CGRectMake(self.centerView.frame.size.width / 2 - inboxViewSize / 2, objectHeight, inboxViewSize, inboxViewSize)];
+            failView.pathColor = self.hudCrossColor;
             failView.hudLineWidth = self.hudLineWidth;
+            failView.drawPath = @[@[[NSValue valueWithCGPoint:CGPointMake(inboxViewSize * 0.15f, inboxViewSize * 0.15f)], [NSValue valueWithCGPoint:CGPointMake(inboxViewSize * 0.85f, inboxViewSize * 0.85f)]], @[[NSValue valueWithCGPoint:CGPointMake(inboxViewSize * 0.85f, inboxViewSize * 0.15f)], [NSValue valueWithCGPoint:CGPointMake(inboxViewSize * 0.15f, inboxViewSize * 0.85f)]]];
+            failView.lengthIteration = 1.6f;
             hudView = failView;
             break;
         }

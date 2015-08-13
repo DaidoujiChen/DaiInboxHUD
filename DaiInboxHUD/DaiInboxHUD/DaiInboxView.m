@@ -150,11 +150,12 @@ typedef enum {
 
 - (UIImage *)preDrawCircleImage {
     UIImage *circleImage;
-    UIGraphicsBeginImageContextWithOptions(CGSizeMake(self.bounds.size.width, self.bounds.size.height), 0, [UIScreen mainScreen].scale);
+    UIGraphicsBeginImageContextWithOptions(self.bounds.size, 0, [UIScreen mainScreen].scale);
     CGContextRef context = UIGraphicsGetCurrentContext();
     
     //設定線條的粗細, 以及圓角
     CGContextSetLineCap(context, kCGLineCapRound);
+    CGContextSetLineJoin(context, kCGLineJoinRound);
     CGContextSetLineWidth(context, self.hudLineWidth);
     
     //設定線條的顏色, 只有在最短狀態的時候才需要用漸變色

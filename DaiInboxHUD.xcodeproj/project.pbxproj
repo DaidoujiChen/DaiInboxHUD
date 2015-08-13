@@ -19,9 +19,8 @@
 		0187ACC31A087FF800094D67 /* DaiIndoxWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 0187ACC21A087FF800094D67 /* DaiIndoxWindow.m */; };
 		0187ACC61A08817F00094D67 /* DaiInboxViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0187ACC51A08817F00094D67 /* DaiInboxViewController.m */; };
 		01D0C7781A0CB61C006AA033 /* DaiInboxDisplayLink.m in Sources */ = {isa = PBXBuildFile; fileRef = 01D0C7771A0CB61C006AA033 /* DaiInboxDisplayLink.m */; };
-		1C19DD2F1B79E35000EFDBCB /* DaiSuccessView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1C19DD2E1B79E35000EFDBCB /* DaiSuccessView.m */; };
 		1C19DD321B79EB9300EFDBCB /* UIColor+MixColor.m in Sources */ = {isa = PBXBuildFile; fileRef = 1C19DD311B79EB9300EFDBCB /* UIColor+MixColor.m */; };
-		1C5011191B7B132700B27BF7 /* DaiFailView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1C5011181B7B132700B27BF7 /* DaiFailView.m */; };
+		1C65ABD81B7C33F40020D922 /* DaiDrawPathView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1C65ABD71B7C33F40020D922 /* DaiDrawPathView.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -58,12 +57,10 @@
 		0187ACC51A08817F00094D67 /* DaiInboxViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DaiInboxViewController.m; sourceTree = "<group>"; };
 		01D0C7761A0CB61C006AA033 /* DaiInboxDisplayLink.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DaiInboxDisplayLink.h; sourceTree = "<group>"; };
 		01D0C7771A0CB61C006AA033 /* DaiInboxDisplayLink.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DaiInboxDisplayLink.m; sourceTree = "<group>"; };
-		1C19DD2D1B79E35000EFDBCB /* DaiSuccessView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DaiSuccessView.h; sourceTree = "<group>"; };
-		1C19DD2E1B79E35000EFDBCB /* DaiSuccessView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DaiSuccessView.m; sourceTree = "<group>"; };
 		1C19DD301B79EB9300EFDBCB /* UIColor+MixColor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIColor+MixColor.h"; sourceTree = "<group>"; };
 		1C19DD311B79EB9300EFDBCB /* UIColor+MixColor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIColor+MixColor.m"; sourceTree = "<group>"; };
-		1C5011171B7B132700B27BF7 /* DaiFailView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DaiFailView.h; sourceTree = "<group>"; };
-		1C5011181B7B132700B27BF7 /* DaiFailView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DaiFailView.m; sourceTree = "<group>"; };
+		1C65ABD61B7C33F40020D922 /* DaiDrawPathView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DaiDrawPathView.h; sourceTree = "<group>"; };
+		1C65ABD71B7C33F40020D922 /* DaiDrawPathView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DaiDrawPathView.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -157,10 +154,8 @@
 				1C19DD311B79EB9300EFDBCB /* UIColor+MixColor.m */,
 				0131ED671A03794B001C0DD8 /* DaiInboxView.h */,
 				0131ED681A03794B001C0DD8 /* DaiInboxView.m */,
-				1C19DD2D1B79E35000EFDBCB /* DaiSuccessView.h */,
-				1C19DD2E1B79E35000EFDBCB /* DaiSuccessView.m */,
-				1C5011171B7B132700B27BF7 /* DaiFailView.h */,
-				1C5011181B7B132700B27BF7 /* DaiFailView.m */,
+				1C65ABD61B7C33F40020D922 /* DaiDrawPathView.h */,
+				1C65ABD71B7C33F40020D922 /* DaiDrawPathView.m */,
 				01D0C7761A0CB61C006AA033 /* DaiInboxDisplayLink.h */,
 				01D0C7771A0CB61C006AA033 /* DaiInboxDisplayLink.m */,
 			);
@@ -267,16 +262,15 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1C65ABD81B7C33F40020D922 /* DaiDrawPathView.m in Sources */,
 				0131ED3C1A037767001C0DD8 /* AppDelegate.m in Sources */,
 				0187ACC31A087FF800094D67 /* DaiIndoxWindow.m in Sources */,
 				1C19DD321B79EB9300EFDBCB /* UIColor+MixColor.m in Sources */,
-				1C5011191B7B132700B27BF7 /* DaiFailView.m in Sources */,
 				01D0C7781A0CB61C006AA033 /* DaiInboxDisplayLink.m in Sources */,
 				0187ACC61A08817F00094D67 /* DaiInboxViewController.m in Sources */,
 				0131ED5F1A037799001C0DD8 /* MainViewController.m in Sources */,
 				0131ED691A03794B001C0DD8 /* DaiInboxView.m in Sources */,
 				0131ED391A037767001C0DD8 /* main.m in Sources */,
-				1C19DD2F1B79E35000EFDBCB /* DaiSuccessView.m in Sources */,
 				0131ED661A037896001C0DD8 /* DaiInboxHUD.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

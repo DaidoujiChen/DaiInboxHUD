@@ -1,40 +1,36 @@
 //
-//  DaiFailView.m
+//  DaiDrawPathView.m
 //  DaiInboxHUD
 //
-//  Created by DaidoujiChen on 2015/8/12.
+//  Created by DaidoujiChen on 2015/8/13.
 //  Copyright (c) 2015年 ChilunChen. All rights reserved.
 //
 
-#import "DaiFailView.h"
+#import "DaiDrawPathView.h"
 #import "UIColor+MixColor.h"
 
-#define lengthIteration 1.6f
 #define framePerSecond 60.0f
 
-@interface DaiFailView ()
+@interface DaiDrawPathView ()
 
-@property (nonatomic, strong) NSArray *drawPath;
 @property (nonatomic, assign) CGFloat length;
 @property (nonatomic, strong) DaiInboxDisplayLink *displayLink;
-@property (nonatomic, strong) UIImage *checkmarkImage;
+@property (nonatomic, strong) UIImage *pathImage;
 
 @end
 
-@implementation DaiFailView
+@implementation DaiDrawPathView
 
 #pragma mark - DaiInboxDisplayLinkDelegate
 
 - (void)displayWillUpdateWithDeltaTime:(CFTimeInterval)deltaTime {
-    __weak DaiFailView *weakSelf = self;
+    __weak DaiDrawPathView *weakSelf = self;
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         if (weakSelf) {
-            __strong DaiFailView *strongSelf = weakSelf;
-            
+            __strong DaiDrawPathView *strongSelf = weakSelf;
             CGFloat deltaValue = MIN(1.0f, deltaTime / (1.0f / framePerSecond));
-            
-            strongSelf.length += lengthIteration * deltaValue;
-            strongSelf.checkmarkImage = [strongSelf preDrawCircleImage];
+            strongSelf.length += self.lengthIteration * deltaValue;
+            strongSelf.pathImage = [strongSelf preDrawPathImage];
             
             //算完以後回 main thread 囉
             dispatch_async(dispatch_get_main_queue(), ^{
@@ -44,19 +40,20 @@
     });
 }
 
-#pragma mark - private
+#pragma mark - private instance method
 
 - (CGFloat)distanceA:(CGPoint)pointA toB:(CGPoint)pointB {
     return sqrt(pow(fabs(pointA.x - pointB.x), 2) + pow(fabs(pointA.y - pointB.y), 2));
 }
 
-- (UIImage *)preDrawCircleImage {
-    UIImage *circleImage;
-    UIGraphicsBeginImageContextWithOptions(CGSizeMake(self.bounds.size.width, self.bounds.size.height), 0, [UIScreen mainScreen].scale);
+- (UIImage *)preDrawPathImage {
+    UIImage *pathImage;
+    UIGraphicsBeginImageContextWithOptions(self.bounds.size, 0, [UIScreen mainScreen].scale);
     CGContextRef context = UIGraphicsGetCurrentContext();
     
     //設定線條的粗細, 以及圓角
     CGContextSetLineCap(context, kCGLineCapRound);
+    CGContextSetLineJoin(context, kCGLineJoinRound);
     CGContextSetLineWidth(context, self.hudLineWidth);
     
     //劃勾勾的線
@@ -89,13 +86,13 @@
             break;
         }
     }
-    CGContextSetRGBStrokeColor(context, self.hudCrossColor.r, self.hudCrossColor.g, self.hudCrossColor.b, self.hudCrossColor.a);
+    CGContextSetRGBStrokeColor(context, self.pathColor.r, self.pathColor.g, self.pathColor.b, self.pathColor.a);
     
     //著色
     CGContextStrokePath(context);
-    circleImage = UIGraphicsGetImageFromCurrentImageContext();
+    pathImage = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
-    return circleImage;
+    return pathImage;
 }
 
 #pragma mark - method override
@@ -103,7 +100,7 @@
 //這邊主要就只負責把圖畫出來
 - (void)drawRect:(CGRect)rect {
     [super drawRect:rect];
-    [self.checkmarkImage drawInRect:rect];
+    [self.pathImage drawInRect:rect];
 }
 
 #pragma mark - life cycle
@@ -113,7 +110,6 @@
     if (self) {
         //初始值
         self.backgroundColor = [UIColor clearColor];
-        self.drawPath = @[@[[NSValue valueWithCGPoint:CGPointMake(CGRectGetWidth(self.bounds) * 0.15f, CGRectGetHeight(self.bounds) * 0.15f)], [NSValue valueWithCGPoint:CGPointMake(CGRectGetWidth(self.bounds) * 0.85f, CGRectGetHeight(self.bounds) * 0.85f)]], @[[NSValue valueWithCGPoint:CGPointMake(CGRectGetWidth(self.bounds) * 0.85f, CGRectGetHeight(self.bounds) * 0.15f)], [NSValue valueWithCGPoint:CGPointMake(CGRectGetWidth(self.bounds) * 0.15f, CGRectGetHeight(self.bounds) * 0.85f)]]];
         self.length = 0;
         self.displayLink = [[DaiInboxDisplayLink alloc] initWithDelegate:self];
     }
