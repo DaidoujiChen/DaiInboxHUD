@@ -197,8 +197,10 @@ typedef enum {
         self.length = maxLength;
         self.status = CricleLengthStatusDecrease;
         self.waitingSecond = 0;
-        self.circleCenter = CGPointMake(frame.size.width / 2, frame.size.height / 2);
-        self.circleRadius = frame.size.width / 3;
+        CGFloat width = CGRectGetWidth(frame);
+        CGFloat height = CGRectGetHeight(frame);
+        self.circleCenter = CGPointMake(width / 2, height / 2);
+        self.circleRadius = width / 3;
         self.displayLink = [[DaiInboxDisplayLink alloc] initWithDelegate:self];
     }
     return self;

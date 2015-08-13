@@ -17,18 +17,22 @@
 
 - (CGRect)centerInOrientation:(UIInterfaceOrientation)orientation {
     CGRect screenBounds = [UIScreen mainScreen].bounds;
+    CGFloat halfScreenWidth = CGRectGetWidth(screenBounds) / 2;
+    CGFloat halfScreenHeight = CGRectGetHeight(screenBounds) / 2;
     CGRect newFrame = self.frame;
+    CGFloat halfFrameWidth = CGRectGetWidth(newFrame) / 2;
+    CGFloat halfFrameHeight = CGRectGetHeight(newFrame) / 2;
     if (UIDeviceOrientationIsPortrait(orientation)) {
-        newFrame.origin.x = screenBounds.size.width / 2 - newFrame.size.width / 2;
-        newFrame.origin.y = screenBounds.size.height / 2 - newFrame.size.height / 2;
+        newFrame.origin.x = halfScreenWidth - halfFrameWidth;
+        newFrame.origin.y = halfScreenHeight - halfFrameHeight;
     }
     else {
-        newFrame.origin.x = screenBounds.size.height / 2 - newFrame.size.height / 2;
-        newFrame.origin.y = screenBounds.size.width / 2 - newFrame.size.width / 2;
+        newFrame.origin.x = halfScreenWidth - halfFrameHeight;
+        newFrame.origin.y = halfScreenHeight - halfFrameWidth;
         
         //在 ios7 的時候, 不論手機轉橫轉直, screenSize always 是 320, 568
         //而 ios8 的時候, 手機則會根據轉橫或是轉直而改變, ex: 直立時是 320, 568, 橫向為 568, 320
-        if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 8.0f) {
+        if ([UIDevice currentDevice].systemVersion.floatValue >= 8.0f) {
             CGFloat swapValue = newFrame.origin.x;
             newFrame.origin.x = newFrame.origin.y;
             newFrame.origin.y = swapValue;
@@ -67,29 +71,33 @@
     }];
 }
 
-#pragma mark - private
+#pragma mark - private instance method
 
-- (void)setupDefaultHUD {
+- (void)setupHUD {
     CGRect messageFrame = CGRectZero;
     UILabel *hudMessageLabel;
+    CGFloat messageLabelWidth = 0;
+    CGFloat messageLabelHeight = 0;
     
     //如果 hud message 有東西, 先算他的 size
-    if (self.hudMessage) {
+    if (self.message) {
         hudMessageLabel = [UILabel new];
-        hudMessageLabel.attributedText = self.hudMessage;
+        hudMessageLabel.attributedText = self.message;
         [hudMessageLabel sizeToFit];
         messageFrame = hudMessageLabel.frame;
+        messageLabelWidth = CGRectGetWidth(hudMessageLabel.frame);
+        messageLabelHeight = CGRectGetHeight(hudMessageLabel.frame);
     }
     
     //設定好 centerview 的大小
     //寬度的算法, 取 hud 本身或是 label 的最大者, 加上左右兩旁的邊框
-    CGFloat centerViewWidth = MAX(inboxViewSize, messageFrame.size.width) + borderGap * 2;
+    CGFloat centerViewWidth = MAX(inboxViewSize, CGRectGetWidth(messageFrame)) + borderGap * 2;
     
     //高度的算法, 只有 hud 的時候就是 hud 本身加上上下的邊框, 多 label 的話, 要在 hud 跟 label 之間多塞一個一半大小的 gap
-    CGFloat centerViewHeight = inboxViewSize + messageFrame.size.height + borderGap * 2 + ((self.hudMessage) ? borderGap * 0.5 : 0);
+    CGFloat centerViewHeight = inboxViewSize + messageLabelHeight + borderGap * 2 + ((self.message) ? borderGap * 0.5 : 0);
     self.centerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, centerViewWidth, centerViewHeight)];
     self.centerView.frame = [self.centerView centerInOrientation:self.interfaceOrientation];
-    self.centerView.backgroundColor = self.hudBackgroundColor;
+    self.centerView.backgroundColor = self.backgroundColor;
     self.centerView.layer.cornerRadius = 5.0f;
     self.centerView.layer.masksToBounds = YES;
     
@@ -97,22 +105,23 @@
     CGFloat objectHeight = borderGap;
     
     //加入 hud 主體
+    CGFloat halfCenterWidth = CGRectGetWidth(self.centerView.frame) / 2;
     UIView *hudView = nil;
-    switch (self.hudType) {
+    switch (self.type) {
         case DaiInboxHUDTypeDefault:
         {
-            DaiInboxView *inboxView = [[DaiInboxView alloc] initWithFrame:CGRectMake(self.centerView.frame.size.width / 2 - inboxViewSize / 2, objectHeight, inboxViewSize, inboxViewSize)];
-            inboxView.hudColors = self.hudColors;
-            inboxView.hudLineWidth = self.hudLineWidth;
+            DaiInboxView *inboxView = [[DaiInboxView alloc] initWithFrame:CGRectMake(halfCenterWidth - inboxViewSize / 2, objectHeight, inboxViewSize, inboxViewSize)];
+            inboxView.hudColors = self.colors;
+            inboxView.hudLineWidth = self.lineWidth;
             hudView = inboxView;
             break;
         }
             
         case DaiInboxHUDTypeSuccess:
         {
-            DaiDrawPathView *successView = [[DaiDrawPathView alloc] initWithFrame:CGRectMake(self.centerView.frame.size.width / 2 - inboxViewSize / 2, objectHeight, inboxViewSize, inboxViewSize)];
-            successView.pathColor = self.hudCheckmarkColor;
-            successView.hudLineWidth = self.hudLineWidth;
+            DaiDrawPathView *successView = [[DaiDrawPathView alloc] initWithFrame:CGRectMake(halfCenterWidth - inboxViewSize / 2, objectHeight, inboxViewSize, inboxViewSize)];
+            successView.pathColor = self.checkmarkColor;
+            successView.hudLineWidth = self.lineWidth;
             successView.drawPath = @[@[[NSValue valueWithCGPoint:CGPointMake(inboxViewSize * 0.25f, inboxViewSize * 0.5f)], [NSValue valueWithCGPoint:CGPointMake(inboxViewSize * 0.5f, inboxViewSize * 0.75f)], [NSValue valueWithCGPoint:CGPointMake(inboxViewSize * 0.85f, inboxViewSize * 0.25f)]]];
             successView.lengthIteration = 0.8f;
             hudView = successView;
@@ -121,9 +130,9 @@
             
         case DaiInboxHUDTypeFail:
         {
-            DaiDrawPathView *failView = [[DaiDrawPathView alloc] initWithFrame:CGRectMake(self.centerView.frame.size.width / 2 - inboxViewSize / 2, objectHeight, inboxViewSize, inboxViewSize)];
-            failView.pathColor = self.hudCrossColor;
-            failView.hudLineWidth = self.hudLineWidth;
+            DaiDrawPathView *failView = [[DaiDrawPathView alloc] initWithFrame:CGRectMake(halfCenterWidth - inboxViewSize / 2, objectHeight, inboxViewSize, inboxViewSize)];
+            failView.pathColor = self.crossColor;
+            failView.hudLineWidth = self.lineWidth;
             failView.drawPath = @[@[[NSValue valueWithCGPoint:CGPointMake(inboxViewSize * 0.15f, inboxViewSize * 0.15f)], [NSValue valueWithCGPoint:CGPointMake(inboxViewSize * 0.85f, inboxViewSize * 0.85f)]], @[[NSValue valueWithCGPoint:CGPointMake(inboxViewSize * 0.85f, inboxViewSize * 0.15f)], [NSValue valueWithCGPoint:CGPointMake(inboxViewSize * 0.15f, inboxViewSize * 0.85f)]]];
             failView.lengthIteration = 1.6f;
             hudView = failView;
@@ -131,11 +140,12 @@
         }
     }
     [self.centerView addSubview:hudView];
-    objectHeight += hudView.frame.size.height + ((self.hudMessage) ? borderGap * 0.5 : 0);
+    CGFloat hudViewHeight = CGRectGetHeight(hudView.frame);
+    objectHeight += hudViewHeight + ((self.message) ? borderGap * 0.5 : 0);
     
     //如果有 label 的話就加
-    if (self.hudMessage) {
-        hudMessageLabel.frame = CGRectMake(self.centerView.frame.size.width / 2 - hudMessageLabel.frame.size.width / 2, objectHeight, hudMessageLabel.frame.size.width, hudMessageLabel.frame.size.height);
+    if (self.message) {
+        hudMessageLabel.frame = CGRectMake(halfCenterWidth - messageLabelWidth / 2, objectHeight, messageLabelWidth, messageLabelHeight);
         [self.centerView addSubview:hudMessageLabel];
     }
     
@@ -148,8 +158,10 @@
 //for ios8
 - (void)viewWillTransitionToSize:(CGSize)size withTransitionCoordinator:(id <UIViewControllerTransitionCoordinator> )coordinator {
     CGRect newFrame = self.centerView.frame;
-    newFrame.origin.x = size.width / 2 - newFrame.size.width / 2;
-    newFrame.origin.y = size.height / 2 - newFrame.size.height / 2;
+    CGFloat halfFrameWidth = CGRectGetWidth(newFrame) / 2;
+    CGFloat halfFrameHeight = CGRectGetHeight(newFrame) / 2;
+    newFrame.origin.x = size.width / 2 - halfFrameWidth;
+    newFrame.origin.y = size.height / 2 - halfFrameHeight;
     __weak DaiInboxViewController *weakSelf = self;
     [UIView animateWithDuration:[coordinator transitionDuration] animations: ^{
         weakSelf.centerView.frame = newFrame;
@@ -169,8 +181,8 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.view.backgroundColor = self.hudMaskColor;
-    [self setupDefaultHUD];
+    self.view.backgroundColor = self.maskColor;
+    [self setupHUD];
     
     //一開始的彈出動畫效果
     self.centerView.transform = CGAffineTransformScale(CGAffineTransformIdentity, 0.001, 0.001);

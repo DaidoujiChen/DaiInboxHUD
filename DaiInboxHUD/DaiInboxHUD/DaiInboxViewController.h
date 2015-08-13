@@ -16,14 +16,14 @@ typedef enum {
 
 @interface DaiInboxViewController : UIViewController
 
-@property (nonatomic, strong) NSArray *hudColors;
-@property (nonatomic, strong) UIColor *hudBackgroundColor;
-@property (nonatomic, strong) UIColor *hudMaskColor;
-@property (nonatomic, strong) UIColor *hudCheckmarkColor;
-@property (nonatomic, strong) UIColor *hudCrossColor;
-@property (nonatomic, assign) CGFloat hudLineWidth;
-@property (nonatomic, strong) NSAttributedString *hudMessage;
-@property (nonatomic, assign) DaiInboxHUDType hudType;
+@property (nonatomic, strong) NSArray *colors;
+@property (nonatomic, strong) UIColor *backgroundColor;
+@property (nonatomic, strong) UIColor *maskColor;
+@property (nonatomic, strong) UIColor *checkmarkColor;
+@property (nonatomic, strong) UIColor *crossColor;
+@property (nonatomic, assign) CGFloat lineWidth;
+@property (nonatomic, strong) NSAttributedString *message;
+@property (nonatomic, assign) DaiInboxHUDType type;
 
 - (void)hide:(void (^)(void))completion;
 

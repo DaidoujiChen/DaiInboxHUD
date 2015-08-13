@@ -26,31 +26,48 @@
     
     switch (arc4random() % 3) {
         case 0:
-            [DaiInboxHUD showMessage:attributedString];
+            if (arc4random() % 2) {
+                [DaiInboxHUD showMessage:attributedString hideAfterDelay:2.0f];
+            }
+            else {
+                [DaiInboxHUD showCopied: ^DaiInboxHUD *(DaiInboxHUD *copiedHUD) {
+                    copiedHUD.backgroundColor = [UIColor redColor];
+                    return copiedHUD;
+                } andMessage:attributedString hideAfterDelay:2.0f];
+            }
             break;
             
         case 1:
-            [DaiInboxHUD showSuccessMessage:attributedString];
+            if (arc4random() % 2) {
+                [DaiInboxHUD showSuccessMessage:attributedString hideAfterDelay:3.0f];
+            }
+            else {
+                [DaiInboxHUD showSuccessCopied: ^DaiInboxHUD *(DaiInboxHUD *copiedHUD) {
+                    copiedHUD.checkmarkColor = [UIColor blueColor];
+                    return copiedHUD;
+                } andMessage:attributedString hideAfterDelay:3.0f];
+            }
             break;
             
         case 2:
-            [DaiInboxHUD showFailMessage:attributedString];
+            if (arc4random() % 2) {
+                [DaiInboxHUD showFailMessage:attributedString hideAfterDelay:4.0f];
+            }
+            else {
+                [DaiInboxHUD showFailCopied: ^DaiInboxHUD *(DaiInboxHUD *copiedHUD) {
+                    copiedHUD.crossColor = [UIColor purpleColor];
+                    return copiedHUD;
+                } andMessage:attributedString hideAfterDelay:4.0f];
+            }
             break;
             
         default:
             break;
     }
-    [self performSelector:@selector(hideHUD) withObject:nil afterDelay:3.0f];
 }
 
 - (IBAction)clickAction:(id)sender {
     NSLog(@"Clicked");
-}
-
-#pragma mark - private
-
-- (void)hideHUD {
-    [DaiInboxHUD hide];
 }
 
 #pragma mark - life cycle
@@ -59,22 +76,22 @@
     [super viewDidLoad];
     
     //客製化想要的顏色
-    [DaiInboxHUD setColors:@[[UIColor grayColor], [UIColor whiteColor], [UIColor blackColor], [UIColor purpleColor]]];
+    [DaiInboxHUD shared].colors = @[[UIColor grayColor], [UIColor whiteColor], [UIColor blackColor], [UIColor purpleColor]];
     
     //想要的背景色
-    [DaiInboxHUD setBackgroundColor:[UIColor orangeColor]];
+    [DaiInboxHUD shared].backgroundColor = [UIColor orangeColor];
     
     //想要的遮膜色
-    [DaiInboxHUD setMaskColor:[UIColor colorWithRed:0 green:0 blue:0 alpha:0.5f]];
+    [DaiInboxHUD shared].maskColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:0.5f];
     
     //想要的線條粗度
-    [DaiInboxHUD setLineWidth:4.0f];
+    [DaiInboxHUD shared].lineWidth = 4.0f;
     
     //打勾要顯示的顏色
-    [DaiInboxHUD setCheckmarkColor:[UIColor greenColor]];
+    [DaiInboxHUD shared].checkmarkColor = [UIColor greenColor];
     
     //叉叉要顯示的顏色
-    [DaiInboxHUD setCrossColor:[UIColor redColor]];
+    [DaiInboxHUD shared].crossColor = [UIColor redColor];
     
     //當然也都可以不設, 使用預設帶的值
 }

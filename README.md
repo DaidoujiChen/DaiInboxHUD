@@ -59,7 +59,10 @@ daidoujichen@gmail.com
 
 `````
 [DaiInboxHUD hide];
+[DaiInboxHUD hideAfterDelay:2.0f];
 `````
+
+`hideAfterDelay:` 可以設置在幾秒後消失, 也可以添加於上面任何一個 method 的後面.
 
 客製化
 ===========
@@ -138,6 +141,22 @@ daidoujichen@gmail.com
 `````
 
 當把這個設定填為 `YES` 時, 在 hud 顯示時, 背後的功能還是可以被操作, 當填 `NO` 的時候, 則會阻斷所有事件.
+
+##特例
+有些時候會想要出現單次設定不同於上面所有設置的行為, 比方說某些時候 hud 顏色特別想跟別人不一樣之類的, 這時候可以用 `copied` 類的 method,
+
+`````
++ (void)showCopied:(CopiedHUD)copied;
+`````
+
+在這個方法下, 我們可以使用與原來設定完全相同的 hud, 只更動其中幾項設置, 而在這個 hud 之後, 不影響到其他 hud
+
+`````
+[DaiInboxHUD showCopied: ^DaiInboxHUD *(DaiInboxHUD *copiedHUD) {    
+    copiedHUD.backgroundColor = [UIColor blackColor];
+    return copiedHUD;
+}];
+`````
 
 注意事項
 ===========
