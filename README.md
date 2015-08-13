@@ -52,7 +52,7 @@ daidoujichen@gmail.com
 
 `````
 + (void)showFail;
-+ (void)showFail:(NSAttributedString *)message;
++ (void)showFailMessage:(NSAttributedString *)message;
 `````
 	
 要他消失的時候 call

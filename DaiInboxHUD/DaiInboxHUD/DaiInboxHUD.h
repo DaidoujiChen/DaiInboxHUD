@@ -27,7 +27,7 @@
 + (void)showSuccessMessage:(NSAttributedString *)message;
 
 //顯示失敗的動畫加字樣
-+ (void)showFail:(NSAttributedString *)message;
++ (void)showFailMessage:(NSAttributedString *)message;
 
 //隱藏 hud
 + (void)hide;

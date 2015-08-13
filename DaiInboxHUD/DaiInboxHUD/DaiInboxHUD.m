@@ -45,7 +45,7 @@
 }
 
 + (void)showFail {
-    [self showFail:nil];
+    [self showFailMessage:nil];
 }
 
 + (void)showMessage:(NSAttributedString *)message {
@@ -58,7 +58,7 @@
     [[self hudWindow] makeKeyAndVisible];
 }
 
-+ (void)showFail:(NSAttributedString *)message {
++ (void)showFailMessage:(NSAttributedString *)message {
     [self hudWindow].rootViewController = [self inboxViewControllerByType:DaiInboxHUDTypeFail andMessage:message];
     [[self hudWindow] makeKeyAndVisible];
 }

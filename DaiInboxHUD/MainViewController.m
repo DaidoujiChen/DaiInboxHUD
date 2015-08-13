@@ -34,7 +34,7 @@
             break;
             
         case 2:
-            [DaiInboxHUD showFail:attributedString];
+            [DaiInboxHUD showFailMessage:attributedString];
             break;
             
         default:
