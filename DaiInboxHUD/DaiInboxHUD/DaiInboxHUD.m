@@ -16,7 +16,10 @@
 #pragma mark - DaiIndoxWindowDelegate
 
 + (BOOL)shouldHandleTouchAtPoint:(CGPoint)point {
-    return ![self shared].allowUserInteraction;
+    
+    // 如果 allowUserInteraction = YES, 表示這個 window 不需要 handle touch event, 因此, 回傳是反相的
+    DaiInboxViewController *inboxViewController = (DaiInboxViewController *)[self hudWindow].rootViewController;
+    return !inboxViewController.allowUserInteraction;
 }
 
 #pragma mark - private class method
@@ -49,6 +52,7 @@
     inboxViewController.lineWidth = inboxHUD.lineWidth;
     inboxViewController.checkmarkColor = inboxHUD.checkmarkColor;
     inboxViewController.crossColor = inboxHUD.crossColor;
+    inboxViewController.allowUserInteraction = inboxHUD.allowUserInteraction;
     inboxViewController.message = message;
     inboxViewController.type = type;
     return inboxViewController;

@@ -23,6 +23,7 @@ typedef enum {
 @property (nonatomic, strong) UIColor *crossColor;
 @property (nonatomic, assign) CGFloat lineWidth;
 @property (nonatomic, strong) NSAttributedString *message;
+@property (nonatomic, assign) BOOL allowUserInteraction;
 @property (nonatomic, assign) DaiInboxHUDType type;
 
 - (void)hide:(void (^)(void))completion;

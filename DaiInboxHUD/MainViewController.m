@@ -56,6 +56,7 @@
             else {
                 [DaiInboxHUD showFailCopied: ^DaiInboxHUD *(DaiInboxHUD *copiedHUD) {
                     copiedHUD.crossColor = [UIColor purpleColor];
+                    copiedHUD.allowUserInteraction = YES;
                     return copiedHUD;
                 } andMessage:attributedString hideAfterDelay:4.0f];
             }
